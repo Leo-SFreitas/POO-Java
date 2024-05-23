@@ -77,6 +77,7 @@ public class CadastroInterfaceBD extends JFrame {
         add(panel);
     }
 
+
     private void connectToDatabase() {
         try {
             // Carregar o driver JDBC
