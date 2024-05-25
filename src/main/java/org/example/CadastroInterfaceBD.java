@@ -2,19 +2,20 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.sql.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class CadastroInterfaceBD extends JFrame {
     private JTextField nomeField, telefoneField, localField;
     private JButton cadastrarButton;
     private Connection connection;
-    private Statement statement;
 
-    public CadastroInterfaceBD() {
+    public CadastroInterfaceBD(Connection connection) {
+        this.connection = connection;
+
         setTitle("Cadastro de Atendimento");
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -24,9 +25,6 @@ public class CadastroInterfaceBD extends JFrame {
 
         // Inicializar os componentes
         initComponents();
-
-        // Conectar ao banco de dados
-        connectToDatabase();
     }
 
     private void initComponents() {
@@ -77,50 +75,36 @@ public class CadastroInterfaceBD extends JFrame {
         add(panel);
     }
 
-
-    private void connectToDatabase() {
-        try {
-            // Carregar o driver JDBC
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            // Conexão com o banco de dados
-            String url = "jdbc:mysql://localhost:3306/manicure";
-            String user = "root";
-            String password = "";
-            connection = DriverManager.getConnection(url, user, password);
-
-            // Criar uma instrução SQL
-            statement = connection.createStatement();
-        } catch (ClassNotFoundException e) {
-            System.err.println("Driver JDBC não encontrado: " + e.getMessage());
-        } catch (SQLException e) {
-            System.err.println("Erro ao conectar ao banco de dados: " + e.getMessage());
-        }
-    }
-
-
     private void cadastrarAtendimento() {
         String nome = nomeField.getText();
         String telefone = telefoneField.getText();
         String local = localField.getText();
 
-        // Verificar se o número de telefone tem 11 dígitos, se não, limpa campo telefone para inserir número correto
+        // Verificar se o número de telefone tem 11 dígitos
         if (telefone.length() != 11) {
-            JOptionPane.showMessageDialog(this, "O número de telefone deve ter no máximo 11 dígitos.");
+            JOptionPane.showMessageDialog(this, "O número de telefone deve ter 11 dígitos.");
             telefoneField.setText(""); // Limpar o campo de telefone
-
             return; // Sair do método se o número de telefone não tiver 11 dígitos
         }
 
         try {
-            // Inserir os dados na tabela do banco de dados
-            String sql = "INSERT INTO atendimentos (nome, telefone, local) VALUES (?, ?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, nome);
-            preparedStatement.setString(2, telefone);
-            preparedStatement.setString(3, local);
+            // Criar a tabela se não existir
+            String createTableSQL = "CREATE TABLE IF NOT EXISTS clientes (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "nome VARCHAR(255) NOT NULL, " +
+                    "telefone VARCHAR(11) NOT NULL, " +
+                    "local VARCHAR(255) NOT NULL)";
+            PreparedStatement createTableStatement = connection.prepareStatement(createTableSQL);
+            createTableStatement.executeUpdate();
 
-            preparedStatement.executeUpdate();
+            // Inserir os dados na tabela do banco de dados
+            String insertSQL = "INSERT INTO clientes (nome, telefone, local) VALUES (?, ?, ?)";
+            PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
+            insertStatement.setString(1, nome);
+            insertStatement.setString(2, telefone);
+            insertStatement.setString(3, local);
+
+            insertStatement.executeUpdate();
 
             // Limpar os campos após a inserção
             nomeField.setText("");
@@ -132,13 +116,5 @@ public class CadastroInterfaceBD extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao cadastrar atendimento.");
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new CadastroInterfaceBD().setVisible(true);
-            }
-        });
     }
 }
