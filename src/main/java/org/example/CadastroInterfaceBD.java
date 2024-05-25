@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class CadastroInterfaceBD extends JFrame {
-    private JTextField nomeField, telefoneField, localField;
+    private JTextField nomeField, aniversarioField, telefoneField, localField;
     private JButton cadastrarButton;
     private Connection connection;
 

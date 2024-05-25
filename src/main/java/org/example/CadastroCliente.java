@@ -18,7 +18,7 @@ public class CadastroCliente extends JFrame {
         setTitle("Dashboard");
         setSize(900, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        getContentPane().setBackground(new Color(218, 215, 219));
+        getContentPane().setBackground(new Color(218, 215, 219)); // Azul escuro
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -123,11 +123,16 @@ public class CadastroCliente extends JFrame {
 
         // Barra de menu
         JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("Arquivo");
+        JMenu fileMenu = new JMenu("Opções do Aplicativo");
+        JMenuItem cadastrarAtendimento = new JMenuItem("Cadastrar Atendimentos");
+        JMenuItem atendimentoCadastrados = new JMenuItem("Agenda de Atendimentos");
         JMenuItem exitMenuItem = new JMenuItem("Sair");
+        fileMenu.add(cadastrarAtendimento);
+        fileMenu.add(atendimentoCadastrados);
         fileMenu.add(exitMenuItem);
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
+
 
         exitMenuItem.addActionListener(new ActionListener() {
             @Override
@@ -158,5 +163,14 @@ public class CadastroCliente extends JFrame {
         birthdayField.setText("");
         phoneField.setText("");
         addressField.setText("");
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new CadastroCliente().setVisible(true);
+            }
+        });
     }
 }
