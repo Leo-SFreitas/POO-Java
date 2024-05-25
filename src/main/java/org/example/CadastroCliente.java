@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 public class CadastroCliente extends JFrame {
     private JTable table;
     private JTextField nameField;
-    private JTextField emailField;
+    private JTextField birthdayField;
     private JTextField phoneField;
     private JTextField addressField;
     private DefaultTableModel model;
@@ -18,31 +18,31 @@ public class CadastroCliente extends JFrame {
         setTitle("Dashboard");
         setSize(900, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        getContentPane().setBackground(new Color(30, 60, 90)); // Azul escuro
+        getContentPane().setBackground(new Color(218, 215, 219));
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
         // Criando o modelo da tabela
-        model = new DefaultTableModel(new String[]{"Nome", "Email", "Telefone", "Endereço"}, 0);
+        model = new DefaultTableModel(new String[]{"Nome", "Aniversario", "Telefone", "Endereço"}, 0);
         table = new JTable(model);
         JScrollPane pane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
 
         // Painel de formulário
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(new Color(30, 60, 90)); // Azul escuro
+        formPanel.setBackground(new Color(218, 215, 219));
         formPanel.setBorder(BorderFactory.createTitledBorder("Novo Cliente"));
 
         // Campos de texto
         addLabelAndField("Nome:", nameField = new JTextField(20), formPanel, gbc, 0);
-        addLabelAndField("Email:", emailField = new JTextField(20), formPanel, gbc, 1);
+        addLabelAndField("Aniversario:", birthdayField = new JTextField(20), formPanel, gbc, 1);
         addLabelAndField("Telefone:", phoneField = new JTextField(20), formPanel, gbc, 2);
         addLabelAndField("Endereço:", addressField = new JTextField(20), formPanel, gbc, 3);
 
         // Definindo a cor do texto para preto
         nameField.setForeground(Color.BLACK);
-        emailField.setForeground(Color.BLACK);
+        birthdayField.setForeground(Color.BLACK);
         phoneField.setForeground(Color.BLACK);
         addressField.setForeground(Color.BLACK);
 
@@ -84,10 +84,10 @@ public class CadastroCliente extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (validateFields()) {
                     String name = nameField.getText();
-                    String email = emailField.getText();
+                    String aniversario = birthdayField.getText();
                     String phone = phoneField.getText();
                     String address = addressField.getText();
-                    model.addRow(new Object[]{name, email, phone, address});
+                    model.addRow(new Object[]{name, aniversario, phone, address});
                     clearFields();
                 } else {
                     JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos");
@@ -148,24 +148,15 @@ public class CadastroCliente extends JFrame {
 
     private boolean validateFields() {
         return !nameField.getText().isEmpty() &&
-               !emailField.getText().isEmpty() &&
+               !birthdayField.getText().isEmpty() &&
                !phoneField.getText().isEmpty() &&
                !addressField.getText().isEmpty();
     }
 
     private void clearFields() {
         nameField.setText("");
-        emailField.setText("");
+        birthdayField.setText("");
         phoneField.setText("");
         addressField.setText("");
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new CadastroCliente().setVisible(true);
-            }
-        });
     }
 }
