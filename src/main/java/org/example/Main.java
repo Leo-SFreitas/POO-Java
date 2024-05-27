@@ -1,15 +1,21 @@
 package org.example;
 
 import javax.swing.*;
+import java.sql.Connection;
 
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                ConnectionBD connectionBD = new ConnectionBD();
-                new CadastroInterfaceBD(connectionBD.getConnection()).setVisible(true);
+                DatabaseManager databaseManager = new DatabaseManager();
+                databaseManager.initializeDatabase();
+                Connection connection = databaseManager.getConnection();
+                if (connection != null) {
+                    new CadastroCliente(connection).setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Erro ao conectar ao banco de dados.");
+                }
             }
         });
     }
 }
-

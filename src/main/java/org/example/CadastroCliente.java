@@ -5,6 +5,11 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 
 public class CadastroCliente extends JFrame {
     private JTable table;
@@ -13,8 +18,11 @@ public class CadastroCliente extends JFrame {
     private JTextField phoneField;
     private JTextField addressField;
     private DefaultTableModel model;
+    private Connection connection;
 
-    public CadastroCliente() {
+    public CadastroCliente(Connection connection) {
+        this.connection = connection;
+
         setTitle("Dashboard");
         setSize(900, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -24,8 +32,14 @@ public class CadastroCliente extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
 
         // Criando o modelo da tabela
-        model = new DefaultTableModel(new String[]{"Nome", "Aniversario", "Telefone", "Endereço"}, 0);
+        model = new DefaultTableModel(new String[]{"ID", "Nome", "Aniversário", "Telefone", "Endereço"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Impede a edição das células
+            }
+        };
         table = new JTable(model);
+        table.removeColumn(table.getColumnModel().getColumn(0)); // Oculta a coluna ID na interface
         JScrollPane pane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
 
@@ -36,7 +50,7 @@ public class CadastroCliente extends JFrame {
 
         // Campos de texto
         addLabelAndField("Nome:", nameField = new JTextField(20), formPanel, gbc, 0);
-        addLabelAndField("Aniversario:", birthdayField = new JTextField(20), formPanel, gbc, 1);
+        addLabelAndField("Aniversário:", birthdayField = new JTextField(20), formPanel, gbc, 1);
         addLabelAndField("Telefone:", phoneField = new JTextField(20), formPanel, gbc, 2);
         addLabelAndField("Endereço:", addressField = new JTextField(20), formPanel, gbc, 3);
 
@@ -62,17 +76,25 @@ public class CadastroCliente extends JFrame {
         buttonPanel.add(clearButton);
         buttonPanel.add(deleteButton);
 
-        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
         formPanel.add(buttonPanel, gbc);
 
         // Adicionando os painéis ao JFrame
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 1; gbc.gridheight = 2;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 2;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 0.3; // Peso do painel de formulário
         gbc.weighty = 1;
         add(formPanel, gbc);
 
-        gbc.gridx = 1; gbc.gridy = 0; gbc.gridwidth = 3; gbc.gridheight = 1;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 3;
+        gbc.gridheight = 1;
         gbc.weightx = 0.7; // Peso do painel da tabela
         gbc.weighty = 0.9;
         gbc.fill = GridBagConstraints.BOTH;
@@ -87,7 +109,7 @@ public class CadastroCliente extends JFrame {
                     String aniversario = birthdayField.getText();
                     String phone = phoneField.getText();
                     String address = addressField.getText();
-                    model.addRow(new Object[]{name, aniversario, phone, address});
+                    addClientToDatabase(name, aniversario, phone, address);
                     clearFields();
                 } else {
                     JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos");
@@ -107,6 +129,8 @@ public class CadastroCliente extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
+                    int id = (int) model.getValueAt(selectedRow, 0);
+                    deleteClientFromDatabase(id);
                     model.removeRow(selectedRow);
                 } else {
                     JOptionPane.showMessageDialog(null, "Selecione uma linha para excluir");
@@ -133,6 +157,12 @@ public class CadastroCliente extends JFrame {
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
 
+        cadastrarAtendimento.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new CadastroAtendimento(connection).setVisible(true);
+            }
+        });
 
         exitMenuItem.addActionListener(new ActionListener() {
             @Override
@@ -140,22 +170,26 @@ public class CadastroCliente extends JFrame {
                 System.exit(0);
             }
         });
+
+        loadClientsFromDatabase();
     }
 
     private void addLabelAndField(String labelText, JTextField textField, JPanel panel, GridBagConstraints gbc, int yPos) {
-        gbc.gridx = 0; gbc.gridy = yPos;
+        gbc.gridx = 0;
+        gbc.gridy = yPos;
         gbc.anchor = GridBagConstraints.EAST;
         panel.add(new JLabel(labelText), gbc);
-        gbc.gridx = 1; gbc.gridy = yPos;
+        gbc.gridx = 1;
+        gbc.gridy = yPos;
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(textField, gbc);
     }
 
     private boolean validateFields() {
         return !nameField.getText().isEmpty() &&
-               !birthdayField.getText().isEmpty() &&
-               !phoneField.getText().isEmpty() &&
-               !addressField.getText().isEmpty();
+                !birthdayField.getText().isEmpty() &&
+                !phoneField.getText().isEmpty() &&
+                !addressField.getText().isEmpty();
     }
 
     private void clearFields() {
@@ -165,12 +199,65 @@ public class CadastroCliente extends JFrame {
         addressField.setText("");
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new CadastroCliente().setVisible(true);
-            }
-        });
+    private void addClientToDatabase(String name, String aniversario, String phone, String address) {
+        String sql = "INSERT INTO clientes (nome, data_aniversario, telefone, endereco) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            stmt.setString(2, aniversario);
+            stmt.setString(3, phone);
+            stmt.setString(4, address);
+            stmt.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Cliente adicionado com sucesso!");
+            loadClientsFromDatabase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao adicionar cliente ao banco de dados.");
+        }
     }
+
+    private void deleteClientFromDatabase(int id) {
+        String sql = "DELETE FROM clientes WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao excluir cliente do banco de dados.");
+        }
+    }
+
+    // Dentro da classe CadastroCliente, método loadClientsFromDatabase()
+    private void loadClientsFromDatabase() {
+        try {
+            if (connection != null && !connection.isClosed()) { // Verifica se a conexão está aberta
+                String sql = "SELECT * FROM clientes";
+                try (PreparedStatement stmt = connection.prepareStatement(sql);
+                     ResultSet rs = stmt.executeQuery()) {
+
+                    // Limpar tabela
+                    model.setRowCount(0);
+
+                    while (rs.next()) {
+                        int id = rs.getInt("id");
+                        String nome = rs.getString("nome");
+                        String aniversario = rs.getString("data_aniversario");
+                        String telefone = rs.getString("telefone");
+                        String endereco = rs.getString("endereco");
+                        model.addRow(new Object[]{id, nome, aniversario, telefone, endereco});
+                    }
+                }
+            } else {
+                // Se a conexão estiver fechada, informe o usuário ou realize alguma outra ação apropriada
+                JOptionPane.showMessageDialog(this, "A conexão com o banco de dados está fechada.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao carregar dados do banco de dados.");
+        }
+    }
+
+
 }
