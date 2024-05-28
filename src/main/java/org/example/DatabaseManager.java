@@ -34,6 +34,7 @@ public class DatabaseManager {
 
         String atendimentosTable = "CREATE TABLE IF NOT EXISTS atendimentos ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "nome TEXT NOT NULL,"
                 + "data_atendimento TEXT NOT NULL,"
                 + "horario TEXT NOT NULL,"
                 + "servico TEXT NOT NULL,"

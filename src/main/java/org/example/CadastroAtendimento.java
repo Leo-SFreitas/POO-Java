@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class CadastroAtendimento extends JFrame {
-    private JTextField nomeField, localField;
+    private JTextField nomeField, localField, dataAtendimentoField, horarioField, servicoField, precoServicoField;
     private JButton cadastrarButton;
     private Connection connection;
 
@@ -17,7 +17,7 @@ public class CadastroAtendimento extends JFrame {
         this.connection = connection;
 
         setTitle("Cadastro de Atendimento");
-        setSize(400, 200);
+        setSize(400, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Muda para DISPOSE_ON_CLOSE
 
         // Centralizar a janela
@@ -50,9 +50,41 @@ public class CadastroAtendimento extends JFrame {
         localField = new JTextField(20);
         panel.add(localField, gbc);
 
-        // Adicionar botão de cadastro
         gbc.gridx = 0;
         gbc.gridy = 2;
+        panel.add(new JLabel("Data de Atendimento:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        dataAtendimentoField = new JTextField(20);
+        panel.add(dataAtendimentoField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(new JLabel("Horário:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        horarioField = new JTextField(20);
+        panel.add(horarioField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        panel.add(new JLabel("Serviço:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        servicoField = new JTextField(20);
+        panel.add(servicoField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        panel.add(new JLabel("Preço do Serviço:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        precoServicoField = new JTextField(20);
+        panel.add(precoServicoField, gbc);
+
+        // Adicionar botão de cadastro
+        gbc.gridx = 0;
+        gbc.gridy = 6;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         cadastrarButton = new JButton("Cadastrar");
@@ -70,27 +102,31 @@ public class CadastroAtendimento extends JFrame {
     private void cadastrarAtendimento() {
         String nome = nomeField.getText();
         String local = localField.getText();
+        String dataAtendimento = dataAtendimentoField.getText();
+        String horario = horarioField.getText();
+        String servico = servicoField.getText();
+        String precoServico = precoServicoField.getText();
 
         try {
-            // Criar a tabela se não existir
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS clientes (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    "nome VARCHAR(255) NOT NULL, " +
-                    "local VARCHAR(255) NOT NULL)";
-            PreparedStatement createTableStatement = connection.prepareStatement(createTableSQL);
-            createTableStatement.executeUpdate();
-
             // Inserir os dados na tabela do banco de dados
-            String insertSQL = "INSERT INTO clientes (nome, local) VALUES (?, ?)";
+            String insertSQL = "INSERT INTO atendimentos (nome, data_atendimento, horario, servico, local_atendimento, preco_servico) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
             insertStatement.setString(1, nome);
-            insertStatement.setString(2, local);
+            insertStatement.setString(2, dataAtendimento);
+            insertStatement.setString(3, horario);
+            insertStatement.setString(4, servico);
+            insertStatement.setString(5, local);
+            insertStatement.setString(6, precoServico);
 
             insertStatement.executeUpdate();
 
             // Limpar os campos após a inserção
             nomeField.setText("");
             localField.setText("");
+            dataAtendimentoField.setText("");
+            horarioField.setText("");
+            servicoField.setText("");
+            precoServicoField.setText("");
 
             JOptionPane.showMessageDialog(this, "Atendimento cadastrado com sucesso!");
         } catch (SQLException e) {

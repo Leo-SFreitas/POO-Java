@@ -10,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 public class CadastroCliente extends JFrame {
     private JTable table;
     private JTextField nameField;
@@ -19,12 +18,14 @@ public class CadastroCliente extends JFrame {
     private JTextField addressField;
     private DefaultTableModel model;
     private Connection connection;
+    private JButton saveButton;
+    private int editingClientId = -1; // Variável para armazenar o ID do cliente que está sendo editado
 
     public CadastroCliente(Connection connection) {
         this.connection = connection;
 
         setTitle("Dashboard");
-        setSize(900, 500);
+        setSize(1000, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setBackground(new Color(218, 215, 219)); // Azul escuro
         setLayout(new GridBagLayout());
@@ -54,27 +55,26 @@ public class CadastroCliente extends JFrame {
         addLabelAndField("Telefone:", phoneField = new JTextField(20), formPanel, gbc, 2);
         addLabelAndField("Endereço:", addressField = new JTextField(20), formPanel, gbc, 3);
 
-        // Definindo a cor do texto para preto
-        nameField.setForeground(Color.BLACK);
-        birthdayField.setForeground(Color.BLACK);
-        phoneField.setForeground(Color.BLACK);
-        addressField.setForeground(Color.BLACK);
-
         // Botões no formulário
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+
         JButton addButton = new JButton("Adicionar");
-        JButton clearButton = new JButton("Limpar");
+        JButton editarButton = new JButton("Editar");
         JButton deleteButton = new JButton("Excluir");
+        saveButton = new JButton("Salvar");
+        saveButton.setEnabled(false); // Desativa o botão Salvar inicialmente
 
         // Ajuste de fonte dos botões
         Font buttonFont = new Font("Arial", Font.PLAIN, 16);
         addButton.setFont(buttonFont);
-        clearButton.setFont(buttonFont);
+        editarButton.setFont(buttonFont);
         deleteButton.setFont(buttonFont);
+        saveButton.setFont(buttonFont);
 
         buttonPanel.add(addButton);
-        buttonPanel.add(clearButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.add(editarButton);
+        buttonPanel.add(saveButton);
 
         gbc.gridx = 0;
         gbc.gridy = 4;
@@ -117,10 +117,20 @@ public class CadastroCliente extends JFrame {
             }
         });
 
-        clearButton.addActionListener(new ActionListener() {
+        editarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                clearFields();
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    editingClientId = (int) model.getValueAt(selectedRow, 0);
+                    nameField.setText((String) model.getValueAt(selectedRow, 1));
+                    birthdayField.setText((String) model.getValueAt(selectedRow, 2));
+                    phoneField.setText((String) model.getValueAt(selectedRow, 3));
+                    addressField.setText((String) model.getValueAt(selectedRow, 4));
+                    saveButton.setEnabled(true); // Ativa o botão Salvar
+                } else {
+                    JOptionPane.showMessageDialog(null, "Selecione uma linha para editar");
+                }
             }
         });
 
@@ -134,6 +144,23 @@ public class CadastroCliente extends JFrame {
                     model.removeRow(selectedRow);
                 } else {
                     JOptionPane.showMessageDialog(null, "Selecione uma linha para excluir");
+                }
+            }
+        });
+
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (validateFields() && editingClientId != -1) {
+                    String name = nameField.getText();
+                    String aniversario = birthdayField.getText();
+                    String phone = phoneField.getText();
+                    String address = addressField.getText();
+                    updateClientInDatabase(editingClientId, name, aniversario, phone, address);
+                    clearFields();
+                    saveButton.setEnabled(false); // Desativa o botão Salvar após a edição
+                } else {
+                    JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos");
                 }
             }
         });
@@ -157,10 +184,11 @@ public class CadastroCliente extends JFrame {
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
 
+        // Adicionar ActionListener para "Cadastrar Atendimentos"
         cadastrarAtendimento.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new CadastroAtendimento(connection).setVisible(true);
+                new TelaAtendimento(connection).setVisible(true);
             }
         });
 
@@ -197,6 +225,7 @@ public class CadastroCliente extends JFrame {
         birthdayField.setText("");
         phoneField.setText("");
         addressField.setText("");
+        editingClientId = -1; // Reseta o ID do cliente em edição
     }
 
     private void addClientToDatabase(String name, String aniversario, String phone, String address) {
@@ -229,6 +258,24 @@ public class CadastroCliente extends JFrame {
         }
     }
 
+    private void updateClientInDatabase(int id, String name, String aniversario, String phone, String address) {
+        String sql = "UPDATE clientes SET nome = ?, data_aniversario = ?, telefone = ?, endereco = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            stmt.setString(2, aniversario);
+            stmt.setString(3, phone);
+            stmt.setString(4, address);
+            stmt.setInt(5, id);
+            stmt.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
+            loadClientsFromDatabase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao atualizar cliente no banco de dados.");
+        }
+    }
+
     // Dentro da classe CadastroCliente, método loadClientsFromDatabase()
     private void loadClientsFromDatabase() {
         try {
@@ -258,6 +305,4 @@ public class CadastroCliente extends JFrame {
             JOptionPane.showMessageDialog(this, "Erro ao carregar dados do banco de dados.");
         }
     }
-
-
 }
