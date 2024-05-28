@@ -5,9 +5,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Connection;
+import java.sql.Statement;
 
 public class TelaAtendimento extends JFrame {
     private JTextArea saidaTextArea;
@@ -36,6 +36,9 @@ public class TelaAtendimento extends JFrame {
         });
         add(abrirCadastroButton, BorderLayout.SOUTH);
 
+        // Carregar os dados do banco de dados ao iniciar a tela
+        carregarDadosAtendimentos();
+
         setVisible(true);
     }
 
@@ -46,20 +49,26 @@ public class TelaAtendimento extends JFrame {
         cadastro.setVisible(true);
     }
 
-    //RETIRAR ESSE MAIN
-    // Método principal
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                DatabaseManager databaseManager = new DatabaseManager();
-                databaseManager.initializeDatabase();
-                Connection connection = databaseManager.getConnection();
-                if (connection != null) {
-                    new TelaAtendimento(connection).setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Erro ao conectar ao banco de dados.");
-                }
+    // Método para carregar os dados dos atendimentos do banco de dados
+    private void carregarDadosAtendimentos() {
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM atendimentos");
+
+            StringBuilder stringBuilder = new StringBuilder();
+            while (resultSet.next()) {
+                stringBuilder.append("Nome: ").append(resultSet.getString("nome")).append("\n");
+                stringBuilder.append("Local: ").append(resultSet.getString("local_atendimento")).append("\n");
+                stringBuilder.append("Data: ").append(resultSet.getString("data_atendimento")).append("\n");
+                stringBuilder.append("Horário: ").append(resultSet.getString("horario")).append("\n");
+                stringBuilder.append("Serviço: ").append(resultSet.getString("servico")).append("\n");
+                stringBuilder.append("Preço: ").append(resultSet.getString("preco_servico")).append("\n\n");
             }
-        });
+
+            saidaTextArea.setText(stringBuilder.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao carregar dados dos atendimentos.");
+        }
     }
 }

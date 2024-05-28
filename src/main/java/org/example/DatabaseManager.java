@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseManager {
-    private static final String URL = "jdbc:sqlite:Manicure_dois.db"; // Nome do arquivo do banco de dados
+    private static final String URL = "jdbc:sqlite:Manicure.db"; // Nome do arquivo do banco de dados
     private Connection connection;
 
     // Método para conectar ao banco de dados
@@ -26,20 +26,20 @@ public class DatabaseManager {
     public void initializeDatabase() {
         String clientesTable = "CREATE TABLE IF NOT EXISTS clientes ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "nome TEXT NOT NULL,"
-                + "telefone TEXT NOT NULL,"
-                + "endereco TEXT NOT NULL,"
-                + "data_aniversario TEXT NOT NULL"
+                + "nome VARCHAR(80) NOT NULL,"
+                + "telefone INTEGER NOT NULL,"
+                + "endereco VARCHAR(80) NOT NULL,"
+                + "data_aniversario DATE NOT NULL"
                 + ");";
 
         String atendimentosTable = "CREATE TABLE IF NOT EXISTS atendimentos ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "nome TEXT NOT NULL,"
-                + "data_atendimento TEXT NOT NULL,"
+                + "nome VARCHAR(80) NOT NULL,"
+                + "data_atendimento DATE NOT NULL,"
                 + "horario TEXT NOT NULL,"
-                + "servico TEXT NOT NULL,"
-                + "local_atendimento TEXT NOT NULL,"
-                + "preco_servico TEXT NOT NULL"
+                + "servico VARCHAR(80) NOT NULL,"
+                + "local_atendimento VARCHAR(80) NOT NULL,"
+                + "preco_servico DOUBLE NOT NULL"
                 + ");";
 
         try (Statement stmt = connect().createStatement()) {

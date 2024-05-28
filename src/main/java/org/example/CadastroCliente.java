@@ -24,7 +24,7 @@ public class CadastroCliente extends JFrame {
     public CadastroCliente(Connection connection) {
         this.connection = connection;
 
-        setTitle("Dashboard");
+        setTitle("Cadastro de Cliente");
         setSize(1000, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setBackground(new Color(218, 215, 219)); // Azul escuro
@@ -175,17 +175,17 @@ public class CadastroCliente extends JFrame {
         // Barra de menu
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("Opções do Aplicativo");
-        JMenuItem cadastrarAtendimento = new JMenuItem("Cadastrar Atendimentos");
-        JMenuItem atendimentoCadastrados = new JMenuItem("Agenda de Atendimentos");
+        JMenuItem atendimentosInterface = new JMenuItem("Agenda Atendimentos");
+        JMenuItem receitasInterface = new JMenuItem("Receitas");
         JMenuItem exitMenuItem = new JMenuItem("Sair");
-        fileMenu.add(cadastrarAtendimento);
-        fileMenu.add(atendimentoCadastrados);
+        fileMenu.add(atendimentosInterface);
+        fileMenu.add(receitasInterface);
         fileMenu.add(exitMenuItem);
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
 
         // Adicionar ActionListener para "Cadastrar Atendimentos"
-        cadastrarAtendimento.addActionListener(new ActionListener() {
+        atendimentosInterface.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new TelaAtendimento(connection).setVisible(true);
