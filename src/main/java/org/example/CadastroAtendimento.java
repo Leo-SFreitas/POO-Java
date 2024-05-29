@@ -12,13 +12,15 @@ public class CadastroAtendimento extends JFrame {
     private JTextField nomeField, localField, dataAtendimentoField, horarioField, servicoField, precoServicoField;
     private JButton cadastrarButton;
     private Connection connection;
+    private Runnable onCadastroSucesso;
 
-    public CadastroAtendimento(Connection connection) {
+    public CadastroAtendimento(Connection connection, Runnable onCadastroSucesso) {
         this.connection = connection;
+        this.onCadastroSucesso = onCadastroSucesso;
 
         setTitle("Cadastro de Atendimento");
         setSize(400, 300);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Muda para DISPOSE_ON_CLOSE
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // Centralizar a janela
         setLocationRelativeTo(null);
@@ -107,6 +109,12 @@ public class CadastroAtendimento extends JFrame {
         String servico = servicoField.getText();
         String precoServico = precoServicoField.getText();
 
+        // Verificar se todos os campos foram preenchidos
+        if (nome.isEmpty() || local.isEmpty() || dataAtendimento.isEmpty() || horario.isEmpty() || servico.isEmpty() || precoServico.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos os campos devem ser preenchidos.");
+            return;
+        }
+
         try {
             // Inserir os dados na tabela do banco de dados
             String insertSQL = "INSERT INTO atendimentos (nome, data_atendimento, horario, servico, local_atendimento, preco_servico) VALUES (?, ?, ?, ?, ?, ?)";
@@ -129,6 +137,8 @@ public class CadastroAtendimento extends JFrame {
             precoServicoField.setText("");
 
             JOptionPane.showMessageDialog(this, "Atendimento cadastrado com sucesso!");
+            onCadastroSucesso.run();  // Notificar sucesso
+            dispose();  // Fechar a janela após o cadastro
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao cadastrar atendimento.");
