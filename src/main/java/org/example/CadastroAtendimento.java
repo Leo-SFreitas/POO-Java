@@ -6,10 +6,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CadastroAtendimento extends JFrame {
-    private JTextField nomeField, localField, dataAtendimentoField, horarioField, servicoField, precoServicoField;
+    private JComboBox<String> clienteComboBox;
+    private JRadioButton residencialRadioButton, consultorioRadioButton;
+    private ButtonGroup localButtonGroup;
+    private JTextField dataAtendimentoField, horarioField, precoServicoField;
+    private JComboBox<String> servicoComboBox;
     private JButton cadastrarButton;
     private Connection connection;
     private Runnable onCadastroSucesso;
@@ -19,7 +24,7 @@ public class CadastroAtendimento extends JFrame {
         this.onCadastroSucesso = onCadastroSucesso;
 
         setTitle("Cadastro de Atendimento");
-        setSize(400, 300);
+        setSize(400, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // Centralizar a janela
@@ -38,19 +43,27 @@ public class CadastroAtendimento extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0;
         gbc.gridy = 0;
-        panel.add(new JLabel("Nome:"), gbc);
+        panel.add(new JLabel("Cliente:"), gbc);
         gbc.gridx = 1;
         gbc.gridy = 0;
-        nomeField = new JTextField(20);
-        panel.add(nomeField, gbc);
+        clienteComboBox = new JComboBox<>();
+        loadClientsIntoComboBox();
+        panel.add(clienteComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
         panel.add(new JLabel("Local de Atendimento:"), gbc);
         gbc.gridx = 1;
         gbc.gridy = 1;
-        localField = new JTextField(20);
-        panel.add(localField, gbc);
+        residencialRadioButton = new JRadioButton("Residencial");
+        consultorioRadioButton = new JRadioButton("Consultório");
+        localButtonGroup = new ButtonGroup();
+        localButtonGroup.add(residencialRadioButton);
+        localButtonGroup.add(consultorioRadioButton);
+        JPanel localPanel = new JPanel(new FlowLayout());
+        localPanel.add(residencialRadioButton);
+        localPanel.add(consultorioRadioButton);
+        panel.add(localPanel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -73,8 +86,8 @@ public class CadastroAtendimento extends JFrame {
         panel.add(new JLabel("Serviço:"), gbc);
         gbc.gridx = 1;
         gbc.gridy = 4;
-        servicoField = new JTextField(20);
-        panel.add(servicoField, gbc);
+        servicoComboBox = new JComboBox<>(new String[]{"Mão", "Pé", "Mão e Pé"});
+        panel.add(servicoComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 5;
@@ -101,44 +114,71 @@ public class CadastroAtendimento extends JFrame {
         add(panel);
     }
 
+    // Método para carregar os clientes existentes no banco de dados para o JComboBox
+    private void loadClientsIntoComboBox() {
+        try {
+            String sql = "SELECT nome FROM clientes";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String nomeCliente = rs.getString("nome");
+                clienteComboBox.addItem(nomeCliente);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao carregar clientes do banco de dados.");
+        }
+    }
+
     private void cadastrarAtendimento() {
-        String nome = nomeField.getText();
-        String local = localField.getText();
+        String clienteSelecionado = (String) clienteComboBox.getSelectedItem();
+        String local = residencialRadioButton.isSelected() ? "Residencial" : "Consultório";
         String dataAtendimento = dataAtendimentoField.getText();
         String horario = horarioField.getText();
-        String servico = servicoField.getText();
+        String servico = (String) servicoComboBox.getSelectedItem();
         String precoServico = precoServicoField.getText();
 
         // Verificar se todos os campos foram preenchidos
-        if (nome.isEmpty() || local.isEmpty() || dataAtendimento.isEmpty() || horario.isEmpty() || servico.isEmpty() || precoServico.isEmpty()) {
+        if (clienteSelecionado.isEmpty() || dataAtendimento.isEmpty() || horario.isEmpty() || servico.isEmpty() || precoServico.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Todos os campos devem ser preenchidos.");
             return;
         }
 
         try {
-            // Inserir os dados na tabela do banco de dados
-            String insertSQL = "INSERT INTO atendimentos (nome, data_atendimento, horario, servico, local_atendimento, preco_servico) VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
-            insertStatement.setString(1, nome);
-            insertStatement.setString(2, dataAtendimento);
-            insertStatement.setString(3, horario);
-            insertStatement.setString(4, servico);
-            insertStatement.setString(5, local);
-            insertStatement.setString(6, precoServico);
+            // Obter o ID do cliente selecionado
+            String getIdClienteSQL = "SELECT id FROM clientes WHERE nome = ?";
+            PreparedStatement getIdClienteStatement = connection.prepareStatement(getIdClienteSQL);
+            getIdClienteStatement.setString(1, clienteSelecionado);
+            ResultSet rs = getIdClienteStatement.executeQuery();
+            if (rs.next()) {
+                int idCliente = rs.getInt("id");
+                // Inserir os dados na tabela do banco de dados
+                String insertSQL = "INSERT INTO atendimentos (id_cliente, cliente, data_atendimento, horario, servico, local_atendimento, preco_servico) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
+                insertStatement.setInt(1, idCliente);
+                insertStatement.setString(2, clienteSelecionado);
+                insertStatement.setString(3, dataAtendimento);
+                insertStatement.setString(4, horario);
+                insertStatement.setString(5, servico);
+                insertStatement.setString(6, local);
+                insertStatement.setString(7, precoServico);
 
-            insertStatement.executeUpdate();
+                insertStatement.executeUpdate();
 
-            // Limpar os campos após a inserção
-            nomeField.setText("");
-            localField.setText("");
-            dataAtendimentoField.setText("");
-            horarioField.setText("");
-            servicoField.setText("");
-            precoServicoField.setText("");
+                // Limpar os campos após a inserção
+                clienteComboBox.setSelectedIndex(0);
+                localButtonGroup.clearSelection();
+                dataAtendimentoField.setText("");
+                horarioField.setText("");
+                servicoComboBox.setSelectedIndex(0);
+                precoServicoField.setText("");
 
-            JOptionPane.showMessageDialog(this, "Atendimento cadastrado com sucesso!");
-            onCadastroSucesso.run();  // Notificar sucesso
-            dispose();  // Fechar a janela após o cadastro
+                JOptionPane.showMessageDialog(this, "Atendimento cadastrado com sucesso!");
+                onCadastroSucesso.run();  // Notificar sucesso
+                dispose();  // Fechar a janela após o cadastro
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao obter o ID do cliente.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao cadastrar atendimento.");

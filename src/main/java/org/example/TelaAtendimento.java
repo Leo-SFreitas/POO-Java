@@ -78,12 +78,12 @@ public class TelaAtendimento extends JFrame {
             while (resultSet.next()) {
                 tableModel.addRow(new Object[]{
                         resultSet.getInt("id"),
-                        resultSet.getString("nome"),
+                        resultSet.getString("cliente"),
                         resultSet.getString("local_atendimento"),
                         resultSet.getString("data_atendimento"),
                         resultSet.getString("horario"),
                         resultSet.getString("servico"),
-                        resultSet.getString("preco_servico")
+                        resultSet.getDouble("preco_servico")
                 });
             }
         } catch (SQLException e) {
@@ -91,6 +91,7 @@ public class TelaAtendimento extends JFrame {
             JOptionPane.showMessageDialog(this, "Erro ao carregar dados dos atendimentos.");
         }
     }
+
     // Método para deletar o atendimento selecionado
     private void deletarAtendimento() {
         int selectedRow = atendimentosTable.getSelectedRow();
@@ -101,12 +102,10 @@ public class TelaAtendimento extends JFrame {
 
         int id = (int) tableModel.getValueAt(selectedRow, 0);
 
-
         try {
             String deleteSQL = "DELETE FROM atendimentos WHERE id = ?";
             PreparedStatement deleteStatement = connection.prepareStatement(deleteSQL);
             deleteStatement.setInt(1, id); // Substitui o ? pelo valor do ID
-
 
             int rowsAffected = deleteStatement.executeUpdate();
             if (rowsAffected > 0) {
@@ -120,5 +119,4 @@ public class TelaAtendimento extends JFrame {
             JOptionPane.showMessageDialog(this, "Erro ao deletar atendimento.");
         }
     }
-
 }
