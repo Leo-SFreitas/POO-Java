@@ -172,7 +172,7 @@ public class CadastroCliente extends JFrame {
             }
         }
 
-        // Barra de menu
+        // Barra de menu VER ISSO AQUI
         setJMenuBar(NavBar.createMenuBar(connection));
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("Opções do Aplicativo");
