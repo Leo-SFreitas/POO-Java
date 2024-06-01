@@ -1,7 +1,10 @@
+package org.example;
+
 import javax.swing.*;
 import java.awt.*;
+import java.sql.*;
 
-public class Tela_Inicial {
+public class TelaInicial {
 
     public static void main(String[] args) {
         // Cria a janela principal
