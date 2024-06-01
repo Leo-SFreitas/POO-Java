@@ -8,7 +8,7 @@ public class TelaInicial {
 
     public static void main(String[] args) {
         // Cria a janela principal
-        JFrame frame = new JFrame("Tela Inicial"); // Altera o título da janela para "Tela Inicial"
+        JFrame frame = new JFrame("Tela Inicial");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new GridBagLayout());
 
@@ -32,10 +32,15 @@ public class TelaInicial {
         // Cria um painel para os botões
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-        // Cria os botões com os novos textos
+        // Cria os botões com os novos textos e aplica a fonte Arial
         JButton button1 = new JButton("Cadastrar Novo Cliente");
+        button1.setFont(new Font("Arial", Font.PLAIN, 14));
+
         JButton button2 = new JButton("Agendar Atendimento");
+        button2.setFont(new Font("Arial", Font.PLAIN, 14));
+
         JButton button3 = new JButton("Receitas");
+        button3.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Adiciona os botões ao painel
         buttonPanel.add(button1);
