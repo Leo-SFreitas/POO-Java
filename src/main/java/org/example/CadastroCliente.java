@@ -172,17 +172,13 @@ public class CadastroCliente extends JFrame {
             }
         }
 
-        // Barra de menu
+        // Barra de menu VER ISSO AQUI
+        setJMenuBar(NavBar.createMenuBar(connection));
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("Opções do Aplicativo");
         JMenuItem atendimentosInterface = new JMenuItem("Agenda Atendimentos");
         JMenuItem receitasInterface = new JMenuItem("Receitas");
         JMenuItem exitMenuItem = new JMenuItem("Sair");
-        fileMenu.add(atendimentosInterface);
-        fileMenu.add(receitasInterface);
-        fileMenu.add(exitMenuItem);
-        menuBar.add(fileMenu);
-        setJMenuBar(menuBar);
 
         // Adicionar ActionListener para "Cadastrar Atendimentos"
         atendimentosInterface.addActionListener(new ActionListener() {
