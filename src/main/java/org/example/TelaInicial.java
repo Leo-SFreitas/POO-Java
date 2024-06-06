@@ -2,6 +2,8 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 
 public class TelaInicial extends JFrame {
@@ -33,19 +35,44 @@ public class TelaInicial extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
         // Cria os botões com os novos textos e aplica a fonte Arial
-        JButton button1 = new JButton("Cadastrar Novo Cliente");
-        button1.setFont(new Font("Arial", Font.PLAIN, 14));
+        JButton Atendimento = new JButton("Agendar Atendimento");
+        Atendimento.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JButton button2 = new JButton("Agendar Atendimento");
-        button2.setFont(new Font("Arial", Font.PLAIN, 14));
+        JButton cadastroCliente = new JButton("Cadastrar Novo Cliente");
+        cadastroCliente.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JButton button3 = new JButton("Receitas");
-        button3.setFont(new Font("Arial", Font.PLAIN, 14));
+        JButton Receita = new JButton("Receitas");
+        Receita.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Adiciona os botões ao painel
-        buttonPanel.add(button1);
-        buttonPanel.add(button2);
-        buttonPanel.add(button3);
+        buttonPanel.add(Atendimento);
+        buttonPanel.add(cadastroCliente);
+        buttonPanel.add(Receita);
+
+        // Adicionar ActionListener para "Agenda Atendimentos"
+        Atendimento.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new TelaAtendimento(connection).setVisible(true);
+            }
+        });
+
+        // Adicionar ActionListener para "Cadastro Cliente"
+        cadastroCliente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new CadastroCliente(connection).setVisible(true);
+            }
+        });
+
+        // Adicionar ActionListener para "Receitas"
+        Receita.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Implemente a lógica para abrir a interface de receitas
+            }
+        });
+
 
         // Define o tamanho preferido do painel de botões
         buttonPanel.setPreferredSize(new Dimension(800, 200));

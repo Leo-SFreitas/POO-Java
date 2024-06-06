@@ -26,7 +26,7 @@ public class CadastroCliente extends JFrame {
 
         setTitle("Cadastro de Cliente");
         setSize(1000, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         getContentPane().setBackground(new Color(218, 215, 219)); // Azul escuro
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
