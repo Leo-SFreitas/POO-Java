@@ -33,6 +33,9 @@ public class GanhosMensais extends JFrame {
 
         // Iniciar o timer para atualizar os ganhos mensais a cada mês
         iniciarTimer();
+
+        JMenuBar menuBar = NavBar.createMenuBar(connection);
+        setJMenuBar(menuBar);
     }
 
     private void initComponents() {
