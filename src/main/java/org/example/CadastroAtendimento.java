@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CadastroAtendimento extends JFrame {
+    // Declarações dos componentes
     private JComboBox<String> clienteComboBox;
     private JRadioButton residencialRadioButton, consultorioRadioButton;
     private ButtonGroup localButtonGroup;
@@ -18,12 +19,18 @@ public class CadastroAtendimento extends JFrame {
     private JButton cadastrarButton;
     private Connection connection;
     private Runnable onCadastroSucesso;
+    private int atendimentoId; // ID do atendimento em modo de edição, -1 se for novo cadastro
 
     public CadastroAtendimento(Connection connection, Runnable onCadastroSucesso) {
+        this(connection, onCadastroSucesso, -1, null, null, null, null, null, null);
+    }
+
+    public CadastroAtendimento(Connection connection, Runnable onCadastroSucesso, int atendimentoId, String cliente, String local, String data, String horario, String servico, Double preco) {
         this.connection = connection;
         this.onCadastroSucesso = onCadastroSucesso;
+        this.atendimentoId = atendimentoId;
 
-        setTitle("Cadastro de Atendimento");
+        setTitle(atendimentoId == -1 ? "Cadastro de Atendimento" : "Editar Atendimento");
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -32,6 +39,21 @@ public class CadastroAtendimento extends JFrame {
 
         // Inicializar os componentes
         initComponents();
+
+        // Preencher os campos se estiver em modo de edição
+        if (atendimentoId != -1) {
+            clienteComboBox.setSelectedItem(cliente);
+            if (local.equals("Consultório")) {
+                consultorioRadioButton.setSelected(true);
+            } else {
+                residencialRadioButton.setSelected(true);
+            }
+            dataAtendimentoField.setText(data);
+            horarioField.setText(horario);
+            servicoComboBox.setSelectedItem(servico);
+            precoServicoField.setText(preco.toString());
+            cadastrarButton.setText("Salvar");
+        }
     }
 
     private void initComponents() {
@@ -97,17 +119,22 @@ public class CadastroAtendimento extends JFrame {
         precoServicoField = new JTextField(20);
         panel.add(precoServicoField, gbc);
 
-        // Adicionar botão de cadastro
+        // Adicionar botão de cadastro/edição
         gbc.gridx = 0;
         gbc.gridy = 6;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        cadastrarButton = new JButton("Cadastrar");
+        cadastrarButton = new JButton(atendimentoId == -1 ? "Cadastrar" : "Salvar");
+
         panel.add(cadastrarButton, gbc);
 
         cadastrarButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                cadastrarAtendimento();
+                if (atendimentoId == -1) {
+                    cadastrarAtendimento();
+                } else {
+                    editarAtendimento();
+                }
             }
         });
 
@@ -215,6 +242,47 @@ public class CadastroAtendimento extends JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao cadastrar atendimento.");
+        }
+    }
+
+    private void editarAtendimento() {
+        String clienteSelecionado = (String) clienteComboBox.getSelectedItem();
+        String local;
+        if (residencialRadioButton.isSelected()) {
+            local = getEnderecoCliente(clienteSelecionado); // Pega o endereço do cliente
+        } else {
+            local = "Consultório";
+        }
+        String dataAtendimento = dataAtendimentoField.getText();
+        String horario = horarioField.getText();
+        String servico = (String) servicoComboBox.getSelectedItem();
+        String precoServico = precoServicoField.getText();
+
+        // Verificar se todos os campos foram preenchidos
+        if (clienteSelecionado.isEmpty() || dataAtendimento.isEmpty() || horario.isEmpty() || servico.isEmpty() || precoServico.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos os campos devem ser preenchidos.");
+            return;
+        }
+
+        try {
+            String updateSQL = "UPDATE atendimentos SET cliente = ?, data_atendimento = ?, horario = ?, servico = ?, local_atendimento = ?, preco_servico = ? WHERE id = ?";
+            PreparedStatement updateStatement = connection.prepareStatement(updateSQL);
+            updateStatement.setString(1, clienteSelecionado);
+            updateStatement.setString(2, dataAtendimento);
+            updateStatement.setString(3, horario);
+            updateStatement.setString(4, servico);
+            updateStatement.setString(5, local);
+            updateStatement.setString(6, precoServico);
+            updateStatement.setInt(7, atendimentoId);
+
+            updateStatement.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Atendimento atualizado com sucesso!");
+            onCadastroSucesso.run();  // Notificar sucesso
+            dispose();  // Fechar a janela após a atualização
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao atualizar atendimento.");
         }
     }
 

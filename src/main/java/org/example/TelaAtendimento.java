@@ -9,7 +9,7 @@ import java.sql.*;
 
 public class TelaAtendimento extends JFrame {
     private JTable atendimentosTable;
-    private JButton abrirCadastroButton, deletarAtendimentoButton;
+    private JButton abrirCadastroButton, deletarAtendimentoButton, editarAtendimentoButton;
     private Connection connection;
     private DefaultTableModel tableModel;
 
@@ -29,9 +29,11 @@ public class TelaAtendimento extends JFrame {
         JPanel buttonPanel = new JPanel();
         abrirCadastroButton = new JButton("Cadastrar atendimento");
         deletarAtendimentoButton = new JButton("Deletar atendimento");
+        editarAtendimentoButton = new JButton("Editar atendimento");
 
         buttonPanel.add(abrirCadastroButton);
         buttonPanel.add(deletarAtendimentoButton);
+        buttonPanel.add(editarAtendimentoButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
         // Ação do botão para abrir pop-up de cadastro de atendimento
@@ -47,6 +49,14 @@ public class TelaAtendimento extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 deletarAtendimento();
+            }
+        });
+
+        // Ação do botão para editar o atendimento selecionado
+        editarAtendimentoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editarAtendimento();
             }
         });
 
@@ -118,5 +128,30 @@ public class TelaAtendimento extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao deletar atendimento.");
         }
+    }
+
+    // Método para editar o atendimento selecionado
+    private void editarAtendimento() {
+        int selectedRow = atendimentosTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Selecione um atendimento para editar.");
+            return;
+        }
+
+        int id = (int) tableModel.getValueAt(selectedRow, 0);
+        String cliente = (String) tableModel.getValueAt(selectedRow, 1);
+        String local = (String) tableModel.getValueAt(selectedRow, 2);
+        String data = (String) tableModel.getValueAt(selectedRow, 3);
+        String horario = (String) tableModel.getValueAt(selectedRow, 4);
+        String servico = (String) tableModel.getValueAt(selectedRow, 5);
+        Double preco = (Double) tableModel.getValueAt(selectedRow, 6);
+
+        CadastroAtendimento cadastro = new CadastroAtendimento(connection, new Runnable() {
+            @Override
+            public void run() {
+                carregarDadosAtendimentos();  // Atualiza a tabela após edição
+            }
+        }, id, cliente, local, data, horario, servico, preco);
+        cadastro.setVisible(true);
     }
 }
