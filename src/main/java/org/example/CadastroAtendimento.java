@@ -111,6 +111,14 @@ public class CadastroAtendimento extends JFrame {
             }
         });
 
+        // Adicionar ActionListener para o botão Residencial
+        residencialRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                preencherEnderecoResidencial();
+            }
+        });
+
         add(panel);
     }
 
@@ -130,9 +138,34 @@ public class CadastroAtendimento extends JFrame {
         }
     }
 
+    private void preencherEnderecoResidencial() {
+        String clienteSelecionado = (String) clienteComboBox.getSelectedItem();
+        if (clienteSelecionado != null && !clienteSelecionado.isEmpty()) {
+            try {
+                String sql = "SELECT endereco FROM clientes WHERE nome = ?";
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setString(1, clienteSelecionado);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    String endereco = rs.getString("endereco");
+                    // Exibir o endereço em algum componente visual ou usar em algum lugar
+                    System.out.println("Endereço do cliente: " + endereco);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Erro ao buscar o endereço do cliente.");
+            }
+        }
+    }
+
     private void cadastrarAtendimento() {
         String clienteSelecionado = (String) clienteComboBox.getSelectedItem();
-        String local = residencialRadioButton.isSelected() ? "Residencial" : "Consultório";
+        String local;
+        if (residencialRadioButton.isSelected()) {
+            local = getEnderecoCliente(clienteSelecionado); // Pega o endereço do cliente
+        } else {
+            local = "Consultório";
+        }
         String dataAtendimento = dataAtendimentoField.getText();
         String horario = horarioField.getText();
         String servico = (String) servicoComboBox.getSelectedItem();
@@ -183,5 +216,21 @@ public class CadastroAtendimento extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao cadastrar atendimento.");
         }
+    }
+
+    private String getEnderecoCliente(String nomeCliente) {
+        try {
+            String sql = "SELECT endereco FROM clientes WHERE nome = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, nomeCliente);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("endereco");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao buscar o endereço do cliente.");
+        }
+        return "Residencial";
     }
 }
