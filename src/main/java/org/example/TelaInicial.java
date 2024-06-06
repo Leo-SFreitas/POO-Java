@@ -2,11 +2,11 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.*;
+import java.sql.Connection;
 
-public class TelaInicial {
+public class TelaInicial extends JFrame {
 
-    public static void main(String[] args) {
+    public TelaInicial(Connection connection) {
         // Cria a janela principal
         JFrame frame = new JFrame("Tela Inicial");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

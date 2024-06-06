@@ -11,7 +11,7 @@ public class Main {
                 databaseManager.initializeDatabase();
                 Connection connection = databaseManager.getConnection();
                 if (connection != null) {
-                    new CadastroCliente(connection).setVisible(true);
+                    new TelaInicial(connection).setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(null, "Erro ao conectar ao banco de dados.");
                 }
