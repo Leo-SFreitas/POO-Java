@@ -12,10 +12,12 @@ public class NavBar {
         JMenu fileMenu = new JMenu("Opções do Aplicativo");
 
         JMenuItem atendimentosInterface = new JMenuItem("Agenda Atendimentos");
+        JMenuItem cadastroClienteInterface = new JMenuItem("Cadastro Clientes");
         JMenuItem receitasInterface = new JMenuItem("Receitas");
         JMenuItem exitMenuItem = new JMenuItem("Sair");
 
         fileMenu.add(atendimentosInterface);
+        fileMenu.add(cadastroClienteInterface);
         fileMenu.add(receitasInterface);
         fileMenu.add(exitMenuItem);
         menuBar.add(fileMenu);
@@ -25,6 +27,14 @@ public class NavBar {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new TelaAtendimento(connection).setVisible(true);
+            }
+        });
+
+        // Adicionar ActionListener para "Cadastro Cliente"
+        cadastroClienteInterface.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new CadastroCliente(connection).setVisible(true);
             }
         });
 
