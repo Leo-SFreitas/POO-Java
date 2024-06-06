@@ -14,8 +14,7 @@ public class CadastroAtendimento extends JFrame {
     private JComboBox<String> clienteComboBox;
     private JRadioButton residencialRadioButton, consultorioRadioButton;
     private ButtonGroup localButtonGroup;
-    private JTextField dataAtendimentoField, horarioField, precoServicoField;
-    private JComboBox<String> servicoComboBox;
+    private JTextField dataAtendimentoField, horarioField, precoServicoField, servicoField;
     private JButton cadastrarButton;
     private Connection connection;
     private Runnable onCadastroSucesso;
@@ -30,7 +29,7 @@ public class CadastroAtendimento extends JFrame {
         this.onCadastroSucesso = onCadastroSucesso;
         this.atendimentoId = atendimentoId;
 
-        setTitle(atendimentoId == -1 ? "Cadastro de Atendimento" : "Editar Atendimento");
+        setTitle(atendimentoId == -1 ? "Cadastro de Atendimento" : "Editar Atendimento"); //condicional ternário
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -50,7 +49,7 @@ public class CadastroAtendimento extends JFrame {
             }
             dataAtendimentoField.setText(data);
             horarioField.setText(horario);
-            servicoComboBox.setSelectedItem(servico);
+            servicoField.setText(servico);
             precoServicoField.setText(preco.toString());
             cadastrarButton.setText("Salvar");
         }
@@ -108,8 +107,8 @@ public class CadastroAtendimento extends JFrame {
         panel.add(new JLabel("Serviço:"), gbc);
         gbc.gridx = 1;
         gbc.gridy = 4;
-        servicoComboBox = new JComboBox<>(new String[]{"Mão", "Pé", "Mão e Pé"});
-        panel.add(servicoComboBox, gbc);
+        servicoField = new JTextField(20);
+        panel.add(servicoField, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 5;
@@ -195,7 +194,7 @@ public class CadastroAtendimento extends JFrame {
         }
         String dataAtendimento = dataAtendimentoField.getText();
         String horario = horarioField.getText();
-        String servico = (String) servicoComboBox.getSelectedItem();
+        String servico = (String) servicoField.getText();
         String precoServico = precoServicoField.getText();
 
         // Verificar se todos os campos foram preenchidos
@@ -230,7 +229,7 @@ public class CadastroAtendimento extends JFrame {
                 localButtonGroup.clearSelection();
                 dataAtendimentoField.setText("");
                 horarioField.setText("");
-                servicoComboBox.setSelectedIndex(0);
+                servicoField.setText("");
                 precoServicoField.setText("");
 
                 JOptionPane.showMessageDialog(this, "Atendimento cadastrado com sucesso!");
@@ -255,7 +254,7 @@ public class CadastroAtendimento extends JFrame {
         }
         String dataAtendimento = dataAtendimentoField.getText();
         String horario = horarioField.getText();
-        String servico = (String) servicoComboBox.getSelectedItem();
+        String servico = servicoField.getText();
         String precoServico = precoServicoField.getText();
 
         // Verificar se todos os campos foram preenchidos
