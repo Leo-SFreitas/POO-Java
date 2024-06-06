@@ -10,9 +10,8 @@ public class TelaInicial extends JFrame {
 
     public TelaInicial(Connection connection) {
         // Cria a janela principal
-        JFrame frame = new JFrame("Tela Inicial");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new GridBagLayout());
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridBagLayout());
 
         // Define as constraints para o GridBagLayout
         GridBagConstraints gbc = new GridBagConstraints();
@@ -20,16 +19,17 @@ public class TelaInicial extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
+        setTitle("Tela Inicial");
 
         // Cria o primeiro texto
         JLabel label1 = new JLabel("Olá, Isabel", SwingConstants.CENTER);
         label1.setFont(new Font("Serif", Font.BOLD, 16));
-        frame.add(label1, gbc);
+        add(label1, gbc);
 
         // Cria o segundo texto
         JLabel label2 = new JLabel("O que você precisa fazer agora?", SwingConstants.CENTER);
         label2.setFont(new Font("Serif", Font.PLAIN, 14));
-        frame.add(label2, gbc);
+        add(label2, gbc);
 
         // Cria um painel para os botões
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -73,23 +73,22 @@ public class TelaInicial extends JFrame {
             }
         });
 
-
         // Define o tamanho preferido do painel de botões
         buttonPanel.setPreferredSize(new Dimension(800, 200));
 
         // Adiciona o painel com os botões à janela
-        frame.add(buttonPanel, gbc);
+        add(buttonPanel, gbc);
 
         // Ajusta o tamanho da janela para o tamanho preferido dos componentes
-        frame.pack();
+        pack();
 
         // Define o tamanho da janela para 800x400
-        frame.setSize(800, 400);
+        setSize(800, 400);
 
         // Centraliza a janela na tela
-        frame.setLocationRelativeTo(null);
+        setLocationRelativeTo(null);
 
         // Torna a janela visível
-        frame.setVisible(true);
+        setVisible(true);
     }
 }
