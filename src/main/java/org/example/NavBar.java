@@ -42,7 +42,7 @@ public class NavBar {
         receitasInterface.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implemente a lógica para abrir a interface de receitas
+                new GanhosMensais(connection).setVisible(true);
             }
         });
 

@@ -22,14 +22,14 @@ public class TelaInicial extends JFrame {
         setTitle("Tela Inicial");
 
         // Cria o primeiro texto
-        JLabel label1 = new JLabel("Olá, Isabel", SwingConstants.CENTER);
-        label1.setFont(new Font("Serif", Font.BOLD, 16));
-        add(label1, gbc);
+        JLabel labelTitulo = new JLabel("Olá, Isabel", SwingConstants.CENTER);
+        labelTitulo.setFont(new Font("Serif", Font.BOLD, 16));
+        add(labelTitulo, gbc);
 
         // Cria o segundo texto
-        JLabel label2 = new JLabel("O que você precisa fazer agora?", SwingConstants.CENTER);
-        label2.setFont(new Font("Serif", Font.PLAIN, 14));
-        add(label2, gbc);
+        JLabel labelSubTitulo = new JLabel("O que você precisa fazer agora?", SwingConstants.CENTER);
+        labelSubTitulo.setFont(new Font("Serif", Font.PLAIN, 14));
+        add(labelSubTitulo, gbc);
 
         // Cria um painel para os botões
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -69,7 +69,7 @@ public class TelaInicial extends JFrame {
         Receita.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implemente a lógica para abrir a interface de receitas
+                new GanhosMensais(connection).setVisible(true);
             }
         });
 
