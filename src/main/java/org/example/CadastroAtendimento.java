@@ -16,8 +16,8 @@ public class CadastroAtendimento extends JFrame {
     private JComboBox<String> clienteComboBox;
     private JRadioButton residencialRadioButton, consultorioRadioButton;
     private ButtonGroup localButtonGroup;
-    private JTextField diaField, anoField, horarioField, precoServicoField, servicoField;
-    private JComboBox<Integer> mesComboBox;
+    private JComboBox<Integer> diaComboBox, anoComboBox, mesComboBox;
+    private JTextField horarioField, precoServicoField, servicoField;
     private JButton cadastrarButton;
     private Connection connection;
     private Runnable onCadastroSucesso;
@@ -53,9 +53,9 @@ public class CadastroAtendimento extends JFrame {
 
             // Dividir a data em dia, mês e ano
             LocalDate dataLocalDate = LocalDate.parse(data, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            diaField.setText(String.valueOf(dataLocalDate.getDayOfMonth()));
+            diaComboBox.setSelectedItem(dataLocalDate.getDayOfMonth());
             mesComboBox.setSelectedItem(dataLocalDate.getMonthValue());
-            anoField.setText(String.valueOf(dataLocalDate.getYear()));
+            anoComboBox.setSelectedItem(dataLocalDate.getYear());
 
             horarioField.setText(horario);
             servicoField.setText(servico);
@@ -100,8 +100,11 @@ public class CadastroAtendimento extends JFrame {
         panel.add(new JLabel("Dia:"), gbc);
         gbc.gridx = 1;
         gbc.gridy = 2;
-        diaField = new JTextField(20);
-        panel.add(diaField, gbc);
+        diaComboBox = new JComboBox<>();
+        for (int i = 1; i <= 31; i++) {
+            diaComboBox.addItem(i);
+        }
+        panel.add(diaComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 3;
@@ -119,8 +122,11 @@ public class CadastroAtendimento extends JFrame {
         panel.add(new JLabel("Ano:"), gbc);
         gbc.gridx = 1;
         gbc.gridy = 4;
-        anoField = new JTextField(20);
-        panel.add(anoField, gbc);
+        anoComboBox = new JComboBox<>();
+        for (int i = LocalDate.now().getYear() - 10; i <= LocalDate.now().getYear() + 10; i++) {
+            anoComboBox.addItem(i);
+        }
+        panel.add(anoComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 5;
@@ -220,9 +226,9 @@ public class CadastroAtendimento extends JFrame {
         } else {
             local = "Consultório";
         }
-        int dia = Integer.parseInt(diaField.getText());
+        int dia = (int) diaComboBox.getSelectedItem();
         int mes = (int) mesComboBox.getSelectedItem();
-        int ano = Integer.parseInt(anoField.getText());
+        int ano = (int) anoComboBox.getSelectedItem();
         String dataAtendimento = String.format("%04d-%02d-%02d", ano, mes, dia);
         String horario = horarioField.getText();
         String servico = (String) servicoField.getText();
@@ -260,9 +266,9 @@ public class CadastroAtendimento extends JFrame {
                 // Limpar os campos após a inserção
                 clienteComboBox.setSelectedIndex(0);
                 localButtonGroup.clearSelection();
-                diaField.setText("");
+                diaComboBox.setSelectedIndex(0);
                 mesComboBox.setSelectedIndex(0);
-                anoField.setText("");
+                anoComboBox.setSelectedIndex(0);
                 horarioField.setText("");
                 servicoField.setText("");
                 precoServicoField.setText("");
@@ -287,9 +293,9 @@ public class CadastroAtendimento extends JFrame {
         } else {
             local = "Consultório";
         }
-        int dia = Integer.parseInt(diaField.getText());
+        int dia = (int) diaComboBox.getSelectedItem();
         int mes = (int) mesComboBox.getSelectedItem();
-        int ano = Integer.parseInt(anoField.getText());
+        int ano = (int) anoComboBox.getSelectedItem();
         String dataAtendimento = String.format("%04d-%02d-%02d", ano, mes, dia);
         String horario = horarioField.getText();
         String servico = servicoField.getText();
