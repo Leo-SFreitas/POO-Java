@@ -19,6 +19,9 @@ public class TelaAtendimento extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 400);
 
+        // Centralizar a janela
+        setLocationRelativeTo(null);
+
         // Configurando a tabela de atendimentos
         tableModel = new DefaultTableModel(new Object[]{"ID", "Nome", "Local", "Data", "Horário", "Serviço", "Preço"}, 0);
         atendimentosTable = new JTable(tableModel);

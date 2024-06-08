@@ -53,7 +53,9 @@ public class TelaInicial extends JFrame {
         Atendimento.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new TelaAtendimento(connection).setVisible(true);
+                TelaAtendimento telaAtendimentoScreen = new TelaAtendimento(connection);
+                telaAtendimentoScreen.setVisible(true);
+                dispose(); // Fecha a janela atual
             }
         });
 
@@ -61,7 +63,9 @@ public class TelaInicial extends JFrame {
         cadastroCliente.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new CadastroCliente(connection).setVisible(true);
+                CadastroCliente cadastroClienteScreen = new CadastroCliente(connection);
+                cadastroClienteScreen.setVisible(true);
+                dispose(); // Fecha a janela atual
             }
         });
 
@@ -70,6 +74,7 @@ public class TelaInicial extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new GanhosMensais(connection).setVisible(true);
+                dispose(); // Fecha a janela atual
             }
         });
 

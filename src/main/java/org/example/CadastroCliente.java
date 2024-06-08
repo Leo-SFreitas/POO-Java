@@ -175,6 +175,9 @@ public class CadastroCliente extends JFrame {
         JMenuBar menuBar = NavBar.createMenuBar(connection);
         setJMenuBar(menuBar);
 
+        // Centraliza a janela na tela
+        setLocationRelativeTo(null);
+
         loadClientsFromDatabase();
     }
 
@@ -252,33 +255,24 @@ public class CadastroCliente extends JFrame {
         }
     }
 
-    // Dentro da classe CadastroCliente, método loadClientsFromDatabase()
     private void loadClientsFromDatabase() {
-        try {
-            if (connection != null && !connection.isClosed()) { // Verifica se a conexão está aberta
-                String sql = "SELECT * FROM clientes";
-                try (PreparedStatement stmt = connection.prepareStatement(sql);
-                     ResultSet rs = stmt.executeQuery()) {
+        model.setRowCount(0); // Limpa os dados atuais da tabela
+        String sql = "SELECT id, nome, data_aniversario, telefone, endereco FROM clientes";
 
-                    // Limpar tabela
-                    model.setRowCount(0);
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
-                    while (rs.next()) {
-                        int id = rs.getInt("id");
-                        String nome = rs.getString("nome");
-                        String aniversario = rs.getString("data_aniversario");
-                        String telefone = rs.getString("telefone");
-                        String endereco = rs.getString("endereco");
-                        model.addRow(new Object[]{id, nome, aniversario, telefone, endereco});
-                    }
-                }
-            } else {
-                // Se a conexão estiver fechada, informe o usuário ou realize alguma outra ação apropriada
-                JOptionPane.showMessageDialog(this, "A conexão com o banco de dados está fechada.");
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("nome");
+                String aniversario = rs.getString("data_aniversario");
+                String phone = rs.getString("telefone");
+                String address = rs.getString("endereco");
+                model.addRow(new Object[]{id, name, aniversario, phone, address});
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Erro ao carregar dados do banco de dados.");
+            JOptionPane.showMessageDialog(this, "Erro ao carregar clientes do banco de dados.");
         }
     }
 }
