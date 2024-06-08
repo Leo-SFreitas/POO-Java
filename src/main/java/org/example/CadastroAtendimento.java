@@ -179,7 +179,7 @@ public class CadastroAtendimento extends JFrame {
     // Método para carregar os clientes existentes no banco de dados para o JComboBox
     private void loadClientsIntoComboBox() {
         try {
-            String sql = "SELECT nome FROM clientes";
+            String sql = "SELECT nome FROM clientes ORDER BY nome";
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {

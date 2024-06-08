@@ -263,7 +263,7 @@ public class CadastroCliente extends JFrame {
 
     private void loadClientsFromDatabase() {
         model.setRowCount(0); // Limpa os dados atuais da tabela
-        String sql = "SELECT id, nome, data_aniversario, telefone, endereco FROM clientes";
+        String sql = "SELECT id, nome, data_aniversario, telefone, endereco FROM clientes ORDER BY nome"; // Ordena pelo nome
 
         try (PreparedStatement stmt = connection.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
