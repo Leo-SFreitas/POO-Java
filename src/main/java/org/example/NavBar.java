@@ -7,7 +7,7 @@ import java.sql.Connection;
 
 public class NavBar {
 
-    public static JMenuBar createMenuBar(Connection connection) {
+    public static JMenuBar createMenuBar(Connection connection, JFrame currentFrame) {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("Opções do Aplicativo");
 
@@ -26,6 +26,7 @@ public class NavBar {
         atendimentosInterface.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                currentFrame.dispose();
                 new TelaAtendimento(connection).setVisible(true);
             }
         });
@@ -34,6 +35,7 @@ public class NavBar {
         cadastroClienteInterface.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                currentFrame.dispose();
                 new CadastroCliente(connection).setVisible(true);
             }
         });
@@ -42,6 +44,7 @@ public class NavBar {
         receitasInterface.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                currentFrame.dispose();
                 new GanhosMensais(connection).setVisible(true);
             }
         });

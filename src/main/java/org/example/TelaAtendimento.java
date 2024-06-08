@@ -40,7 +40,7 @@ public class TelaAtendimento extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
 
         //Adionando NavBar
-        JMenuBar menuBar = NavBar.createMenuBar(connection);
+        JMenuBar menuBar = NavBar.createMenuBar(connection, this);
         setJMenuBar(menuBar);
 
         // Ação do botão para abrir pop-up de cadastro de atendimento

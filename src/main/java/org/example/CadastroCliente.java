@@ -32,6 +32,13 @@ public class CadastroCliente extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
 
+        // Centralizar a janela
+        setLocationRelativeTo(null);
+
+        // Adionando NavBar
+        JMenuBar menuBar = NavBar.createMenuBar(connection, this);
+        setJMenuBar(menuBar);
+
         // Criando o modelo da tabela
         model = new DefaultTableModel(new String[]{"ID", "Nome", "Aniversário", "Telefone", "Endereço"}, 0) {
             @Override
@@ -172,7 +179,6 @@ public class CadastroCliente extends JFrame {
             }
         }
 
-        JMenuBar menuBar = NavBar.createMenuBar(connection);
         setJMenuBar(menuBar);
 
         // Centraliza a janela na tela

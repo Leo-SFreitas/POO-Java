@@ -9,56 +9,56 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class GanhosMensais extends JFrame {
-
+    private JTable table;
+    private DefaultTableModel model;
     private Connection connection;
-    private DefaultTableModel tableModel;
 
     public GanhosMensais(Connection connection) {
+        super("Ganhos Mensais");
         this.connection = connection;
-
-        setTitle("Ganhos Mensais");
-        setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(800, 400);
+        setLayout(new BorderLayout());
+
+        // Centralizar a janela
         setLocationRelativeTo(null);
 
-        initComponents();
-        carregarGanhosMensais();
-
-        JMenuBar menuBar = NavBar.createMenuBar(connection);
+        // Adionando NavBar
+        JMenuBar menuBar = NavBar.createMenuBar(connection, this);
         setJMenuBar(menuBar);
+
+        // Tabela de ganhos mensais
+        model = new DefaultTableModel();
+        model.addColumn("Mês");
+        model.addColumn("Ano");
+        model.addColumn("Total de Ganhos");
+
+        table = new JTable(model);
+        add(new JScrollPane(table), BorderLayout.CENTER);
+
+        loadMonthlyEarnings();
+
+        setVisible(true);
     }
 
-    private void initComponents() {
-        JPanel panel = new JPanel(new BorderLayout());
-        getContentPane().add(panel);
+    // Método para carregar os ganhos mensais do banco de dados
+    private void loadMonthlyEarnings() {
+        model.setRowCount(0); // Limpar a tabela antes de carregar novos dados
 
-        tableModel = new DefaultTableModel(new Object[]{"Mês", "Ano", "Total"}, 0);
-        JTable table = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(table);
-        panel.add(scrollPane, BorderLayout.CENTER);
-    }
-
-    private void carregarGanhosMensais() {
         try {
-            String sql = "SELECT strftime('%m', data_atendimento) AS mes, strftime('%Y', data_atendimento) AS ano, SUM(preco_servico) AS total " +
-                    "FROM atendimentos " +
-                    "GROUP BY strftime('%m', data_atendimento), strftime('%Y', data_atendimento)";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+            String query = "SELECT MONTH(data_atendimento) AS mes, YEAR(data_atendimento) AS ano, SUM(preco_servico) AS total_ganhos FROM atendimentos GROUP BY YEAR(data_atendimento), MONTH(data_atendimento)";
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
 
-            while (rs.next()) {
-                String mes = rs.getString("mes");
-                String ano = rs.getString("ano");
-                double total = rs.getDouble("total");
+            while (resultSet.next()) {
+                int month = resultSet.getInt("mes");
+                int year = resultSet.getInt("ano");
+                double totalEarnings = resultSet.getDouble("total_ganhos");
 
-                // Converte o mês para número de 1 a 12
-                int mesNumerico = mes != null && !mes.isEmpty() ? Integer.parseInt(mes) : 0;
-
-                tableModel.addRow(new Object[]{mesNumerico, ano, total});
+                model.addRow(new Object[]{month, year, totalEarnings});
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Erro ao carregar os ganhos mensais.");
         }
     }
 }
