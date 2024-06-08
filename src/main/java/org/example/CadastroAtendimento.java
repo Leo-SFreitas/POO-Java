@@ -97,36 +97,29 @@ public class CadastroAtendimento extends JFrame {
 
         gbc.gridx = 0;
         gbc.gridy = 2;
-        panel.add(new JLabel("Dia:"), gbc);
+        panel.add(new JLabel("Dia/Mês/Ano:"), gbc);
         gbc.gridx = 1;
         gbc.gridy = 2;
+        JPanel datePanel = new JPanel(new FlowLayout());
         diaComboBox = new JComboBox<>();
         for (int i = 1; i <= 31; i++) {
             diaComboBox.addItem(i);
         }
-        panel.add(diaComboBox, gbc);
+        datePanel.add(diaComboBox);
 
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        panel.add(new JLabel("Mês:"), gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 3;
         mesComboBox = new JComboBox<>();
         for (int i = 1; i <= 12; i++) {
             mesComboBox.addItem(i);
         }
-        panel.add(mesComboBox, gbc);
+        datePanel.add(mesComboBox);
 
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        panel.add(new JLabel("Ano:"), gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 4;
         anoComboBox = new JComboBox<>();
         for (int i = LocalDate.now().getYear() - 10; i <= LocalDate.now().getYear() + 10; i++) {
             anoComboBox.addItem(i);
         }
-        panel.add(anoComboBox, gbc);
+        datePanel.add(anoComboBox);
+
+        panel.add(datePanel, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 5;

@@ -93,11 +93,16 @@ public class TelaAtendimento extends JFrame {
             tableModel.setRowCount(0); // Limpar a tabela antes de carregar novos dados
 
             while (resultSet.next()) {
+                int dia = resultSet.getInt("dia_atendimento");
+                int mes = resultSet.getInt("mes_atendimento");
+                int ano = resultSet.getInt("ano_atendimento");
+                String dataAtendimento = String.format("%02d/%02d/%02d", dia, mes, ano % 100); // Formatar a data como dd/mm/aa
+
                 tableModel.addRow(new Object[]{
                         resultSet.getInt("id"),
                         resultSet.getString("cliente"),
                         resultSet.getString("local_atendimento"),
-                        resultSet.getString("data_atendimento"),
+                        dataAtendimento,
                         resultSet.getString("horario"),
                         resultSet.getString("servico"),
                         resultSet.getDouble("preco_servico")
