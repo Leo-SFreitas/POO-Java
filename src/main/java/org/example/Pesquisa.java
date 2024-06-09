@@ -30,7 +30,7 @@ public class Pesquisa extends JFrame {
         setJMenuBar(menuBar);
 
         setTitle("Pesquisa de Cliente");
-        setSize(800, 600);
+        setSize(800, 650);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -65,13 +65,13 @@ public class Pesquisa extends JFrame {
         gbc.anchor = GridBagConstraints.WEST; // Alinhamento à esquerda
         gbc.insets = new Insets(5, 5, 5,5); // Margens entre os componentes
 
-// Rótulos
+        // Rótulos
         JLabel nomeLabel = new JLabel("Nome:");
-        JLabel aniversarioLabel = new JLabel("Data de Nascimento:");
+        JLabel aniversarioLabel = new JLabel("Data de Aniversário:");
         JLabel telefoneLabel = new JLabel("Telefone:");
         JLabel enderecoLabel = new JLabel("Endereço:");
 
-// Campos de texto para exibir informações do cliente
+        // Campos de texto para exibir informações do cliente
         nomeField = new JTextField(20);
         nomeField.setEditable(false); // Tornar não editável
 
@@ -85,7 +85,7 @@ public class Pesquisa extends JFrame {
         enderecoField.setEditable(false); // Tornar não editável
 
 
-// Adicionando os componentes ao painel
+        // Adicionando os componentes ao painel
         gbc.gridx = 0;
         gbc.gridy = 0;
         centerPanel.add(nomeLabel, gbc);
