@@ -8,12 +8,15 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class TelaAtendimento extends JFrame {
     private JTable atendimentosTable;
     private JButton abrirCadastroButton, deletarAtendimentoButton, editarAtendimentoButton;
     private Connection connection;
     private DefaultTableModel tableModel;
+    private java.util.List<Integer> atendimentoIds = new java.util.ArrayList<>();
+
 
     public TelaAtendimento(Connection connection) {
         super("Atendimentos");
@@ -25,7 +28,7 @@ public class TelaAtendimento extends JFrame {
         setLocationRelativeTo(null);
 
         // Configurando a tabela de atendimentos
-        tableModel = new DefaultTableModel(new Object[]{"ID", "Nome", "Local", "Data", "Horário", "Serviço", "Preço"}, 0);
+        tableModel = new DefaultTableModel(new Object[]{"Nome", "Local", "Data", "Horário", "Serviço", "Preço"}, 0);
         atendimentosTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(atendimentosTable);
         add(scrollPane, BorderLayout.CENTER);
@@ -93,15 +96,18 @@ public class TelaAtendimento extends JFrame {
             ResultSet resultSet = statement.executeQuery("SELECT * FROM atendimentos ORDER BY ano_atendimento, mes_atendimento, dia_atendimento, horario");
 
             tableModel.setRowCount(0); // Limpar a tabela antes de carregar novos dados
+            atendimentoIds.clear(); // Limpar a lista de IDs
 
             while (resultSet.next()) {
+                int id = resultSet.getInt("id");
                 int dia = resultSet.getInt("dia_atendimento");
                 int mes = resultSet.getInt("mes_atendimento");
                 int ano = resultSet.getInt("ano_atendimento");
                 String dataAtendimento = String.format("%02d/%02d/%02d", dia, mes, ano % 100); // Formatar a data como dd/mm/aa
 
+                atendimentoIds.add(id); // Adicionar o ID à lista
+
                 tableModel.addRow(new Object[]{
-                        resultSet.getInt("id"),
                         resultSet.getString("cliente"),
                         resultSet.getString("local_atendimento"),
                         dataAtendimento,
@@ -116,6 +122,8 @@ public class TelaAtendimento extends JFrame {
         }
     }
 
+
+    // Método para deletar o atendimento selecionado
     // Método para deletar o atendimento selecionado
     private void deletarAtendimento() {
         int selectedRow = atendimentosTable.getSelectedRow();
@@ -124,7 +132,7 @@ public class TelaAtendimento extends JFrame {
             return;
         }
 
-        int id = (int) tableModel.getValueAt(selectedRow, 0);
+        int id = atendimentoIds.get(selectedRow);
 
         try {
             String deleteSQL = "DELETE FROM atendimentos WHERE id = ?";
@@ -152,13 +160,13 @@ public class TelaAtendimento extends JFrame {
             return;
         }
 
-        int id = (int) tableModel.getValueAt(selectedRow, 0);
-        String cliente = (String) tableModel.getValueAt(selectedRow, 1);
-        String local = (String) tableModel.getValueAt(selectedRow, 2);
-        String data = (String) tableModel.getValueAt(selectedRow, 3);
-        String horario = (String) tableModel.getValueAt(selectedRow, 4);
-        String servico = (String) tableModel.getValueAt(selectedRow, 5);
-        Double preco = (Double) tableModel.getValueAt(selectedRow, 6);
+        int id = atendimentoIds.get(selectedRow);
+        String cliente = (String) tableModel.getValueAt(selectedRow, 0);
+        String local = (String) tableModel.getValueAt(selectedRow, 1);
+        String data = (String) tableModel.getValueAt(selectedRow, 2);
+        String horario = (String) tableModel.getValueAt(selectedRow, 3);
+        String servico = (String) tableModel.getValueAt(selectedRow, 4);
+        Double preco = (Double) tableModel.getValueAt(selectedRow, 5);
 
         // Converte a data de dd/MM/yy para yyyy-MM-dd
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
@@ -173,4 +181,5 @@ public class TelaAtendimento extends JFrame {
         }, id, cliente, local, dataFormatada, horario, servico, preco);
         cadastro.setVisible(true);
     }
+
 }
