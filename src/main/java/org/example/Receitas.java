@@ -3,6 +3,7 @@ package org.example;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +11,9 @@ import java.sql.SQLException;
 import java.text.DateFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.awt.event.*;
+import java.io.*;
+import javax.swing.table.*;
 
 public class Receitas extends JFrame {
     private JTable table;
@@ -32,7 +36,7 @@ public class Receitas extends JFrame {
 
         // Tabela de ganhos mensais
         model = new DefaultTableModel();
-        model.addColumn("Mês");
+        model.addColumn("Mes");
         model.addColumn("Ano");
         model.addColumn("Total de Atendimentos");
         model.addColumn("Total de Ganhos");
@@ -41,6 +45,16 @@ public class Receitas extends JFrame {
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         loadMonthlyEarnings();
+
+        // Adicionar botão para exportar para CSV
+        JButton exportButton = new JButton("Exportar para CSV");
+        exportButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exportToCSV();
+            }
+        });
+        add(exportButton, BorderLayout.SOUTH);
 
         setVisible(true);
     }
@@ -71,6 +85,42 @@ public class Receitas extends JFrame {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    // Método auxiliar para exportar para CSV
+    private void exportToCSV() {
+        try {
+            FileWriter fw = new FileWriter("receitas.csv", StandardCharsets.UTF_8);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            // Escrever cabeçalho
+            for (int i = 0; i < table.getColumnCount(); i++) {
+                bw.write(table.getColumnName(i));
+                if (i < table.getColumnCount() - 1) {
+                    bw.write(",");
+                }
+            }
+            bw.newLine();
+
+            // Escrever dados
+            for (int i = 0; i < table.getRowCount(); i++) {
+                for (int j = 0; j < table.getColumnCount(); j++) {
+                    bw.write(String.valueOf(table.getValueAt(i, j)));
+                    if (j < table.getColumnCount() - 1) {
+                        bw.write(",");
+                    }
+                }
+                bw.newLine();
+            }
+
+            bw.close();
+            fw.close();
+
+            JOptionPane.showMessageDialog(this, "Dados exportados para receitas.csv com sucesso!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao exportar para CSV.");
         }
     }
 

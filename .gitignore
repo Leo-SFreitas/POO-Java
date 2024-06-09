@@ -3,6 +3,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 Manicure.db
+receitas.csv
+receitas.xlsx
+receitas.xls
+receitas.pdf
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
