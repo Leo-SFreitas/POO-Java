@@ -9,16 +9,14 @@ import java.sql.*;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Locale;
 
 public class TelaAtendimento extends JFrame {
     private JTable atendimentosTable;
-    private JButton abrirCadastroButton, deletarAtendimentoButton, editarAtendimentoButton;
+    private JButton abrirCadastroButton, deletarAtendimentoButton, editarAtendimentoButton, deletarTudoButton;
     private Connection connection;
     private DefaultTableModel tableModel;
     private java.util.List<Integer> atendimentoIds = new java.util.ArrayList<>();
-
 
     public TelaAtendimento(Connection connection) {
         super("Atendimentos");
@@ -40,13 +38,15 @@ public class TelaAtendimento extends JFrame {
         abrirCadastroButton = new JButton("Cadastrar atendimento");
         deletarAtendimentoButton = new JButton("Deletar atendimento");
         editarAtendimentoButton = new JButton("Editar atendimento");
+        deletarTudoButton = new JButton("Deletar tudo");
 
         buttonPanel.add(abrirCadastroButton);
         buttonPanel.add(deletarAtendimentoButton);
         buttonPanel.add(editarAtendimentoButton);
+        buttonPanel.add(deletarTudoButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        //Adionando NavBar
+        // Adicionando NavBar
         JMenuBar menuBar = NavBar.createMenuBar(connection, this);
         setJMenuBar(menuBar);
 
@@ -71,6 +71,14 @@ public class TelaAtendimento extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 editarAtendimento();
+            }
+        });
+
+        // Ação do botão para deletar todos os atendimentos
+        deletarTudoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deletarTodosAtendimentos();
             }
         });
 
@@ -126,7 +134,6 @@ public class TelaAtendimento extends JFrame {
             JOptionPane.showMessageDialog(this, "Erro ao carregar dados dos atendimentos.");
         }
     }
-
 
     // Método para deletar o atendimento selecionado
     private void deletarAtendimento() {
@@ -196,6 +203,28 @@ public class TelaAtendimento extends JFrame {
             }
         }, id, cliente, local, dataFormatada, horario, servico, preco);
         cadastro.setVisible(true);
+    }
+
+    // Método para deletar todos os atendimentos
+    private void deletarTodosAtendimentos() {
+        int confirm = JOptionPane.showConfirmDialog(this, "Tem certeza de que deseja deletar todos os atendimentos?", "Confirmação", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                String deleteAllSQL = "DELETE FROM atendimentos";
+                PreparedStatement deleteAllStatement = connection.prepareStatement(deleteAllSQL);
+
+                int rowsAffected = deleteAllStatement.executeUpdate();
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(this, "Todos os atendimentos foram deletados com sucesso.");
+                    carregarDadosAtendimentos();  // Atualiza a tabela após deleção
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao deletar todos os atendimentos.");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Erro ao deletar todos os atendimentos.");
+            }
+        }
     }
 
     private String formatCurrency(double value) {
