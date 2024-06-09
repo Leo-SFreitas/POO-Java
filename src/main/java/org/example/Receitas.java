@@ -8,12 +8,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class GanhosMensais extends JFrame {
+public class Receitas extends JFrame {
     private JTable table;
     private DefaultTableModel model;
     private Connection connection;
 
-    public GanhosMensais(Connection connection) {
+    public Receitas(Connection connection) {
         super("Ganhos Mensais");
         this.connection = connection;
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -23,7 +23,7 @@ public class GanhosMensais extends JFrame {
         // Centralizar a janela
         setLocationRelativeTo(null);
 
-        // Adionando NavBar
+        // Adicionar NavBar
         JMenuBar menuBar = NavBar.createMenuBar(connection, this);
         setJMenuBar(menuBar);
 
@@ -46,7 +46,10 @@ public class GanhosMensais extends JFrame {
         model.setRowCount(0); // Limpar a tabela antes de carregar novos dados
 
         try {
-            String query = "SELECT MONTH(data_atendimento) AS mes, YEAR(data_atendimento) AS ano, SUM(preco_servico) AS total_ganhos FROM atendimentos GROUP BY YEAR(data_atendimento), MONTH(data_atendimento)";
+            // Ajustando a consulta para agrupar por mês e ano e somar os ganhos
+            String query = "SELECT mes_atendimento AS mes, ano_atendimento AS ano, SUM(preco_servico) AS total_ganhos " +
+                    "FROM atendimentos " +
+                    "GROUP BY ano_atendimento, mes_atendimento";
             PreparedStatement statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
 

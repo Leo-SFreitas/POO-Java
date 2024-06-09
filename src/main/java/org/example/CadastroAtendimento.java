@@ -51,11 +51,17 @@ public class CadastroAtendimento extends JFrame {
                 residencialRadioButton.setSelected(true);
             }
 
-            // Dividir a data em dia, mês e ano
+            // Converte a data de yyyy-MM-dd para LocalDate
             LocalDate dataLocalDate = LocalDate.parse(data, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            diaComboBox.setSelectedItem(dataLocalDate.getDayOfMonth());
-            mesComboBox.setSelectedItem(dataLocalDate.getMonthValue());
-            anoComboBox.setSelectedItem(dataLocalDate.getYear());
+
+            // Formata LocalDate para dd/MM/yy
+            String dataFormatada = dataLocalDate.format(DateTimeFormatter.ofPattern("dd/MM/yy"));
+
+            // Dividir a data em dia, mês e ano
+            String[] dataPartes = dataFormatada.split("/");
+            diaComboBox.setSelectedItem(Integer.parseInt(dataPartes[0]));
+            mesComboBox.setSelectedItem(Integer.parseInt(dataPartes[1]));
+            anoComboBox.setSelectedItem(Integer.parseInt(dataPartes[2]));
 
             horarioField.setText(horario);
             servicoField.setText(servico);
@@ -222,7 +228,6 @@ public class CadastroAtendimento extends JFrame {
         int dia = (int) diaComboBox.getSelectedItem();
         int mes = (int) mesComboBox.getSelectedItem();
         int ano = (int) anoComboBox.getSelectedItem();
-        String dataAtendimento = String.format("%04d-%02d-%02d", ano, mes, dia);
         String horario = horarioField.getText();
         String servico = (String) servicoField.getText();
         String precoServico = precoServicoField.getText();
@@ -289,7 +294,6 @@ public class CadastroAtendimento extends JFrame {
         int dia = (int) diaComboBox.getSelectedItem();
         int mes = (int) mesComboBox.getSelectedItem();
         int ano = (int) anoComboBox.getSelectedItem();
-        String dataAtendimento = String.format("%04d-%02d-%02d", ano, mes, dia);
         String horario = horarioField.getText();
         String servico = servicoField.getText();
         String precoServico = precoServicoField.getText();

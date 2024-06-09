@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class TelaAtendimento extends JFrame {
     private JTable atendimentosTable;
@@ -158,12 +160,17 @@ public class TelaAtendimento extends JFrame {
         String servico = (String) tableModel.getValueAt(selectedRow, 5);
         Double preco = (Double) tableModel.getValueAt(selectedRow, 6);
 
+        // Converte a data de dd/MM/yy para yyyy-MM-dd
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+        LocalDate localDate = LocalDate.parse(data, formatter);
+        String dataFormatada = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
         CadastroAtendimento cadastro = new CadastroAtendimento(connection, new Runnable() {
             @Override
             public void run() {
                 carregarDadosAtendimentos();  // Atualiza a tabela após edição
             }
-        }, id, cliente, local, data, horario, servico, preco);
+        }, id, cliente, local, dataFormatada, horario, servico, preco);
         cadastro.setVisible(true);
     }
 }

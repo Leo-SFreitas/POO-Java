@@ -73,7 +73,7 @@ public class TelaInicial extends JFrame {
         Receita.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new GanhosMensais(connection).setVisible(true);
+                new Receitas(connection).setVisible(true);
                 dispose(); // Fecha a janela atual
             }
         });

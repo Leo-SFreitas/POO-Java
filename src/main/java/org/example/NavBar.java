@@ -45,7 +45,7 @@ public class NavBar {
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentFrame.dispose();
-                new GanhosMensais(connection).setVisible(true);
+                new Receitas(connection).setVisible(true);
             }
         });
 
