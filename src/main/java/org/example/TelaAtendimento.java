@@ -207,7 +207,7 @@ public class TelaAtendimento extends JFrame {
 
     // Método para deletar todos os atendimentos
     private void deletarTodosAtendimentos() {
-        int confirm = JOptionPane.showConfirmDialog(this, "Tem certeza de que deseja deletar todos os atendimentos?", "Confirmação", JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this, "Tem certeza de que deseja deletar todos os atendimentos? Caso delete, todo o registro de atendimento será perdido, afetando diretamente os cálculos da Receita e a visualização dos dados da Pesquisa aprofundada", "Confirmação", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             try {
                 String deleteAllSQL = "DELETE FROM atendimentos";
