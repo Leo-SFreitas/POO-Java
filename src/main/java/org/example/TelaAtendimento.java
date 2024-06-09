@@ -170,12 +170,24 @@ public class TelaAtendimento extends JFrame {
         String data = (String) tableModel.getValueAt(selectedRow, 2);
         String horario = (String) tableModel.getValueAt(selectedRow, 3);
         String servico = (String) tableModel.getValueAt(selectedRow, 4);
-        Double preco = (Double) tableModel.getValueAt(selectedRow, 5);
+        String precoStr = (String) tableModel.getValueAt(selectedRow, 5);
 
         // Converte a data de dd/MM/yy para yyyy-MM-dd
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
         LocalDate localDate = LocalDate.parse(data, formatter);
         String dataFormatada = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        // Remover o símbolo de moeda e converter para Double
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        Double preco = null;
+        try {
+            Number number = currencyFormat.parse(precoStr);
+            preco = number.doubleValue();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao converter o preço.");
+            return;
+        }
 
         CadastroAtendimento cadastro = new CadastroAtendimento(connection, new Runnable() {
             @Override
@@ -185,6 +197,7 @@ public class TelaAtendimento extends JFrame {
         }, id, cliente, local, dataFormatada, horario, servico, preco);
         cadastro.setVisible(true);
     }
+
     private String formatCurrency(double value) {
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
         return currencyFormat.format(value);
