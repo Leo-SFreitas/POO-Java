@@ -14,7 +14,7 @@ public class Receitas extends JFrame {
     private Connection connection;
 
     public Receitas(Connection connection) {
-        super("Ganhos Mensais");
+        super("Receitas");
         this.connection = connection;
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 400);
@@ -31,6 +31,7 @@ public class Receitas extends JFrame {
         model = new DefaultTableModel();
         model.addColumn("Mês");
         model.addColumn("Ano");
+        model.addColumn("Total de Atendimentos");
         model.addColumn("Total de Ganhos");
 
         table = new JTable(model);
@@ -46,8 +47,9 @@ public class Receitas extends JFrame {
         model.setRowCount(0); // Limpar a tabela antes de carregar novos dados
 
         try {
-            // Ajustando a consulta para agrupar por mês e ano e somar os ganhos
-            String query = "SELECT mes_atendimento AS mes, ano_atendimento AS ano, SUM(preco_servico) AS total_ganhos " +
+            // Ajustando a consulta para agrupar por mês e ano, somar os ganhos e contar atendimentos
+            String query = "SELECT mes_atendimento AS mes, ano_atendimento AS ano, " +
+                    "SUM(preco_servico) AS total_ganhos, COUNT(*) AS total_atendimentos " +
                     "FROM atendimentos " +
                     "GROUP BY ano_atendimento, mes_atendimento";
             PreparedStatement statement = connection.prepareStatement(query);
@@ -56,9 +58,11 @@ public class Receitas extends JFrame {
             while (resultSet.next()) {
                 int month = resultSet.getInt("mes");
                 int year = resultSet.getInt("ano");
+                int totalAtendimentos = resultSet.getInt("total_atendimentos");
                 double totalEarnings = resultSet.getDouble("total_ganhos");
 
-                model.addRow(new Object[]{month, year, totalEarnings});
+
+                model.addRow(new Object[]{month, year,totalAtendimentos, totalEarnings});
             }
         } catch (SQLException e) {
             e.printStackTrace();
