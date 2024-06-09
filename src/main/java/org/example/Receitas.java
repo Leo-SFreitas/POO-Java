@@ -7,6 +7,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Receitas extends JFrame {
     private JTable table;
@@ -61,11 +64,28 @@ public class Receitas extends JFrame {
                 int totalAtendimentos = resultSet.getInt("total_atendimentos");
                 double totalEarnings = resultSet.getDouble("total_ganhos");
 
+                String monthName = getMonthName(month);
+                String formattedEarnings = formatCurrency(totalEarnings);
 
-                model.addRow(new Object[]{month, year,totalAtendimentos, totalEarnings});
+                model.addRow(new Object[]{monthName, year, totalAtendimentos, formattedEarnings});
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    // Método auxiliar para obter o nome do mês por extenso
+    private String getMonthName(int month) {
+        String[] months = new DateFormatSymbols(new Locale("pt", "BR")).getMonths();
+        if (month >= 1 && month <= 12) {
+            return months[month - 1];
+        }
+        return "Desconhecido";  // Retorno padrão para valores de mês inválidos
+    }
+
+    // Método auxiliar para formatar o valor monetário
+    private String formatCurrency(double value) {
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        return currencyFormat.format(value);
     }
 }
