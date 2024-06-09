@@ -6,9 +6,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class TelaAtendimento extends JFrame {
     private JTable atendimentosTable;
@@ -103,7 +105,10 @@ public class TelaAtendimento extends JFrame {
                 int dia = resultSet.getInt("dia_atendimento");
                 int mes = resultSet.getInt("mes_atendimento");
                 int ano = resultSet.getInt("ano_atendimento");
+
                 String dataAtendimento = String.format("%02d/%02d/%02d", dia, mes, ano % 100); // Formatar a data como dd/mm/aa
+                double preco = resultSet.getDouble("preco_servico");
+                String formattedPreco = formatCurrency(preco);
 
                 atendimentoIds.add(id); // Adicionar o ID à lista
 
@@ -113,7 +118,7 @@ public class TelaAtendimento extends JFrame {
                         dataAtendimento,
                         resultSet.getString("horario"),
                         resultSet.getString("servico"),
-                        resultSet.getDouble("preco_servico")
+                        formattedPreco
                 });
             }
         } catch (SQLException e) {
@@ -123,7 +128,6 @@ public class TelaAtendimento extends JFrame {
     }
 
 
-    // Método para deletar o atendimento selecionado
     // Método para deletar o atendimento selecionado
     private void deletarAtendimento() {
         int selectedRow = atendimentosTable.getSelectedRow();
@@ -180,6 +184,10 @@ public class TelaAtendimento extends JFrame {
             }
         }, id, cliente, local, dataFormatada, horario, servico, preco);
         cadastro.setVisible(true);
+    }
+    private String formatCurrency(double value) {
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        return currencyFormat.format(value);
     }
 
 }

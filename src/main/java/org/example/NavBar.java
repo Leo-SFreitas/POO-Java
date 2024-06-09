@@ -14,11 +14,13 @@ public class NavBar {
         JMenuItem atendimentosInterface = new JMenuItem("Agenda Atendimentos");
         JMenuItem cadastroClienteInterface = new JMenuItem("Cadastro Clientes");
         JMenuItem receitasInterface = new JMenuItem("Receitas");
+        JMenuItem pesquisaInterface = new JMenuItem("Pesquisa Aprofundada");
         JMenuItem exitMenuItem = new JMenuItem("Sair");
 
         fileMenu.add(atendimentosInterface);
         fileMenu.add(cadastroClienteInterface);
         fileMenu.add(receitasInterface);
+        fileMenu.add(pesquisaInterface);
         fileMenu.add(exitMenuItem);
         menuBar.add(fileMenu);
 
@@ -46,6 +48,14 @@ public class NavBar {
             public void actionPerformed(ActionEvent e) {
                 currentFrame.dispose();
                 new Receitas(connection).setVisible(true);
+            }
+        });
+        //Adicionar ActionListener para "Pesquisa"
+        pesquisaInterface.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentFrame.dispose();
+                new Pesquisa(connection).setVisible(true);
             }
         });
 

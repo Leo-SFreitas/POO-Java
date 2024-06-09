@@ -44,10 +44,14 @@ public class TelaInicial extends JFrame {
         JButton Receita = new JButton("Receitas");
         Receita.setFont(new Font("Arial", Font.PLAIN, 14));
 
+        JButton Pesquisa = new JButton("Pesquisa Aprofundada");
+        Pesquisa.setFont(new Font("Arial", Font.PLAIN, 14));
+
         // Adiciona os botões ao painel
         buttonPanel.add(Atendimento);
         buttonPanel.add(cadastroCliente);
         buttonPanel.add(Receita);
+        buttonPanel.add(Pesquisa);
 
         // Adicionar ActionListener para "Agenda Atendimentos"
         Atendimento.addActionListener(new ActionListener() {
@@ -77,6 +81,16 @@ public class TelaInicial extends JFrame {
                 dispose(); // Fecha a janela atual
             }
         });
+
+        // Adicionar ActionListener para "Pesquisa"
+        Pesquisa.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Pesquisa(connection).setVisible(true);
+                dispose(); // Fecha a janela atual
+            }
+        });
+
 
         // Define o tamanho preferido do painel de botões
         buttonPanel.setPreferredSize(new Dimension(800, 200));
