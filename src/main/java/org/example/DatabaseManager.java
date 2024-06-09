@@ -29,7 +29,7 @@ public class DatabaseManager {
                 + "nome VARCHAR(80) NOT NULL,"
                 + "telefone INTEGER NOT NULL,"
                 + "endereco VARCHAR(80) NOT NULL,"
-                + "data_aniversario DATE NOT NULL"
+                + "data_aniversario DATE"
                 + ");";
 
         String atendimentosTable = "CREATE TABLE IF NOT EXISTS atendimentos ("

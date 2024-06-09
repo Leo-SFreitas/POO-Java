@@ -90,7 +90,7 @@ public class TelaAtendimento extends JFrame {
     private void carregarDadosAtendimentos() {
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM atendimentos");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM atendimentos ORDER BY ano_atendimento, mes_atendimento, dia_atendimento, horario");
 
             tableModel.setRowCount(0); // Limpar a tabela antes de carregar novos dados
 

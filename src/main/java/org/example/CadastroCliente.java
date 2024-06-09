@@ -200,7 +200,6 @@ public class CadastroCliente extends JFrame {
 
     private boolean validateFields() {
         return !nameField.getText().isEmpty() &&
-                !birthdayField.getText().isEmpty() &&
                 !phoneField.getText().isEmpty() &&
                 !addressField.getText().isEmpty();
     }
