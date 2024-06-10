@@ -29,7 +29,7 @@ public class Pesquisa extends JFrame {
         JMenuBar menuBar = NavBar.createMenuBar(connection, this);
         setJMenuBar(menuBar);
 
-        setTitle("Pesquisa de Cliente");
+        setTitle("Pesquisa Aprofundada");
         setSize(800, 650);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
