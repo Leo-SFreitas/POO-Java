@@ -54,14 +54,14 @@ public class CadastroAtendimento extends JFrame {
             // Converte a data de yyyy-MM-dd para LocalDate
             LocalDate dataLocalDate = LocalDate.parse(data, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-            // Formata LocalDate para dd/MM/yy
-            String dataFormatada = dataLocalDate.format(DateTimeFormatter.ofPattern("dd/MM/yy"));
-
             // Dividir a data em dia, mês e ano
-            String[] dataPartes = dataFormatada.split("/");
-            diaComboBox.setSelectedItem(Integer.parseInt(dataPartes[0]));
-            mesComboBox.setSelectedItem(Integer.parseInt(dataPartes[1]));
-            anoComboBox.setSelectedItem(Integer.parseInt(dataPartes[2]));
+            int dia = dataLocalDate.getDayOfMonth();
+            int mes = dataLocalDate.getMonthValue();
+            int ano = dataLocalDate.getYear();
+
+            diaComboBox.setSelectedItem(dia);
+            mesComboBox.setSelectedItem(mes);
+            anoComboBox.setSelectedItem(ano);
 
             horarioField.setText(horario);
             servicoField.setText(servico);
@@ -69,6 +69,7 @@ public class CadastroAtendimento extends JFrame {
             cadastrarButton.setText("Salvar");
         }
     }
+
 
     private void initComponents() {
         JPanel panel = new JPanel(new GridBagLayout());

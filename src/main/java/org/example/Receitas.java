@@ -13,7 +13,6 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.awt.event.*;
 import java.io.*;
-import javax.swing.table.*;
 
 public class Receitas extends JFrame {
     private JTable table;
