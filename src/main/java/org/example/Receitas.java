@@ -46,7 +46,7 @@ public class Receitas extends JFrame {
         loadMonthlyEarnings();
 
         // Adicionar botão para exportar para CSV
-        JButton exportButton = new JButton("Exportar para CSV");
+        JButton exportButton = new JButton("Exportar para planilha");
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
