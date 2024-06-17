@@ -54,41 +54,29 @@ public class TelaInicial extends JFrame {
         buttonPanel.add(Pesquisa);
 
         // Adicionar ActionListener para "Agenda Atendimentos"
-        Atendimento.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                TelaAtendimento telaAtendimentoScreen = new TelaAtendimento(connection);
-                telaAtendimentoScreen.setVisible(true);
-                dispose(); // Fecha a janela atual
-            }
+        Atendimento.addActionListener(e -> {
+            TelaAtendimento telaAtendimentoScreen = new TelaAtendimento(connection);
+            telaAtendimentoScreen.setVisible(true);
+            dispose(); // Fecha a janela atual
         });
 
         // Adicionar ActionListener para "Cadastro Cliente"
-        cadastroCliente.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                CadastroCliente cadastroClienteScreen = new CadastroCliente(connection);
-                cadastroClienteScreen.setVisible(true);
-                dispose(); // Fecha a janela atual
-            }
+        cadastroCliente.addActionListener(e -> {
+            CadastroCliente cadastroClienteScreen = new CadastroCliente(connection);
+            cadastroClienteScreen.setVisible(true);
+            dispose(); // Fecha a janela atual
         });
 
         // Adicionar ActionListener para "Receitas"
-        Receita.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Receitas(connection).setVisible(true);
-                dispose(); // Fecha a janela atual
-            }
+        Receita.addActionListener(e -> {
+            new Receitas(connection).setVisible(true);
+            dispose(); // Fecha a janela atual
         });
 
         // Adicionar ActionListener para "Pesquisa"
-        Pesquisa.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Pesquisa(connection).setVisible(true);
-                dispose(); // Fecha a janela atual
-            }
+        Pesquisa.addActionListener(e -> {
+            new Pesquisa(connection).setVisible(true);
+            dispose(); // Fecha a janela atual
         });
 
 

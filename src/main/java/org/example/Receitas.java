@@ -15,9 +15,9 @@ import java.awt.event.*;
 import java.io.*;
 
 public class Receitas extends JFrame {
-    private JTable table;
-    private DefaultTableModel model;
-    private Connection connection;
+    private final JTable table;
+    private final DefaultTableModel model;
+    private final Connection connection;
 
     public Receitas(Connection connection) {
         super("Receitas");
@@ -47,12 +47,7 @@ public class Receitas extends JFrame {
 
         // Adicionar botão para exportar para CSV
         JButton exportButton = new JButton("Exportar para planilha");
-        exportButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                exportToCSV();
-            }
-        });
+        exportButton.addActionListener(e -> exportToCSV());
         add(exportButton, BorderLayout.SOUTH);
 
         setVisible(true);

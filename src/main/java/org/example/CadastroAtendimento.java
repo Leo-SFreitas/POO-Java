@@ -19,9 +19,9 @@ public class CadastroAtendimento extends JFrame {
     private JComboBox<Integer> diaComboBox, anoComboBox, mesComboBox;
     private JTextField horarioField, precoServicoField, servicoField;
     private JButton cadastrarButton;
-    private Connection connection;
-    private Runnable onCadastroSucesso;
-    private int atendimentoId; // ID do atendimento em modo de edição, -1 se for novo cadastro
+    private final Connection connection;
+    private final Runnable onCadastroSucesso;
+    private final int atendimentoId; // ID do atendimento em modo de edição, -1 se for novo cadastro
 
     public CadastroAtendimento(Connection connection, Runnable onCadastroSucesso) {
         this(connection, onCadastroSucesso, -1, null, null, null, null, null, null);
@@ -84,7 +84,7 @@ public class CadastroAtendimento extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = 0;
         clienteComboBox = new JComboBox<>();
-        loadClientsIntoComboBox();
+        loadClientesToComboBox();
         panel.add(clienteComboBox, gbc);
 
         gbc.gridx = 0;
@@ -161,29 +161,22 @@ public class CadastroAtendimento extends JFrame {
 
         panel.add(cadastrarButton, gbc);
 
-        cadastrarButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (atendimentoId == -1) {
-                    cadastrarAtendimento();
-                } else {
-                    editarAtendimento();
-                }
+        cadastrarButton.addActionListener(e -> {
+            if (atendimentoId == -1) {
+                cadastrarAtendimento();
+            } else {
+                editarAtendimento();
             }
         });
 
         // Adicionar ActionListener para o botão Residencial
-        residencialRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                preencherEnderecoResidencial();
-            }
-        });
+        residencialRadioButton.addActionListener(e -> preencherEnderecoResidencial());
 
         add(panel);
     }
 
-    // Método para carregar os clientes existentes no banco de dados para o JComboBox
-    private void loadClientsIntoComboBox() {
+    // Método para carregar os clientes existentes no banco de dados para o JComboBoxSSS
+    private void loadClientesToComboBox() {
         try {
             String sql = "SELECT nome FROM clientes ORDER BY nome";
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -230,7 +223,7 @@ public class CadastroAtendimento extends JFrame {
         int mes = (int) mesComboBox.getSelectedItem();
         int ano = (int) anoComboBox.getSelectedItem();
         String horario = horarioField.getText();
-        String servico = (String) servicoField.getText();
+        String servico = servicoField.getText();
         String precoServico = precoServicoField.getText();
 
         // Verificar se todos os campos foram preenchidos

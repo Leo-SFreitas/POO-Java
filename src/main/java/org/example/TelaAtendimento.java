@@ -12,11 +12,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class TelaAtendimento extends JFrame {
-    private JTable atendimentosTable;
-    private JButton abrirCadastroButton, deletarAtendimentoButton, editarAtendimentoButton, deletarTudoButton;
-    private Connection connection;
-    private DefaultTableModel tableModel;
-    private java.util.List<Integer> atendimentoIds = new java.util.ArrayList<>();
+    private final JTable atendimentosTable;
+    private final Connection connection;
+    private final DefaultTableModel tableModel;
+    private final java.util.List<Integer> atendimentoIds = new java.util.ArrayList<>();
 
     public TelaAtendimento(Connection connection) {
         super("Atendimentos");
@@ -35,10 +34,10 @@ public class TelaAtendimento extends JFrame {
 
         // Painel para os botões
         JPanel buttonPanel = new JPanel();
-        abrirCadastroButton = new JButton("Cadastrar atendimento");
-        deletarAtendimentoButton = new JButton("Deletar atendimento");
-        editarAtendimentoButton = new JButton("Editar atendimento");
-        deletarTudoButton = new JButton("Deletar tudo");
+        JButton abrirCadastroButton = new JButton("Cadastrar atendimento");
+        JButton deletarAtendimentoButton = new JButton("Deletar atendimento");
+        JButton editarAtendimentoButton = new JButton("Editar atendimento");
+        JButton deletarTudoButton = new JButton("Deletar tudo");
 
         buttonPanel.add(abrirCadastroButton);
         buttonPanel.add(deletarAtendimentoButton);
@@ -51,36 +50,16 @@ public class TelaAtendimento extends JFrame {
         setJMenuBar(menuBar);
 
         // Ação do botão para abrir pop-up de cadastro de atendimento
-        abrirCadastroButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                abrirCadastroAtendimento();
-            }
-        });
+        abrirCadastroButton.addActionListener(e -> abrirCadastroAtendimento());
 
         // Ação do botão para deletar o atendimento selecionado
-        deletarAtendimentoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deletarAtendimento();
-            }
-        });
+        deletarAtendimentoButton.addActionListener(e -> deletarAtendimento());
 
         // Ação do botão para editar o atendimento selecionado
-        editarAtendimentoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editarAtendimento();
-            }
-        });
+        editarAtendimentoButton.addActionListener(e -> editarAtendimento());
 
         // Ação do botão para deletar todos os atendimentos
-        deletarTudoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deletarTodosAtendimentos();
-            }
-        });
+        deletarTudoButton.addActionListener(e -> deletarTodosAtendimentos());
 
         // Carregar os dados do banco de dados ao iniciar a tela
         carregarDadosAtendimentos();
@@ -90,12 +69,8 @@ public class TelaAtendimento extends JFrame {
 
     // Função para abrir tela de cadastro de atendimento
     private void abrirCadastroAtendimento() {
-        CadastroAtendimento cadastro = new CadastroAtendimento(connection, new Runnable() {
-            @Override
-            public void run() {
-                carregarDadosAtendimentos();  // Atualiza a tabela após cadastro
-            }
-        });
+        // Atualiza a tabela após cadastro
+        CadastroAtendimento cadastro = new CadastroAtendimento(connection, this::carregarDadosAtendimentos);
         cadastro.setVisible(true);
     }
 
@@ -186,7 +161,7 @@ public class TelaAtendimento extends JFrame {
 
         // Remover o símbolo de moeda e converter para Double
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-        Double preco = null;
+        double preco;
         try {
             Number number = currencyFormat.parse(precoStr);
             preco = number.doubleValue();
@@ -196,12 +171,8 @@ public class TelaAtendimento extends JFrame {
             return;
         }
 
-        CadastroAtendimento cadastro = new CadastroAtendimento(connection, new Runnable() {
-            @Override
-            public void run() {
-                carregarDadosAtendimentos();  // Atualiza a tabela após edição
-            }
-        }, id, cliente, local, dataFormatada, horario, servico, preco);
+        // Atualiza a tabela após edição
+        CadastroAtendimento cadastro = new CadastroAtendimento(connection, this::carregarDadosAtendimentos, id, cliente, local, dataFormatada, horario, servico, preco);
         cadastro.setVisible(true);
     }
 

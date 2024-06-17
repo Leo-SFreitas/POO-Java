@@ -13,14 +13,13 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public class Pesquisa extends JFrame {
-    private JComboBox<String> clienteComboBox;
-    private JTextField nomeField;
-    private JTextField aniversarioField;
-    private JTextField telefoneField;
-    private JTextField enderecoField;
-    private DefaultTableModel atendimentosModel;
-    private JTable atendimentosTable;
-    private Connection connection;
+    private final JComboBox<String> clienteComboBox;
+    private final JTextField nomeField;
+    private final JTextField aniversarioField;
+    private final JTextField telefoneField;
+    private final JTextField enderecoField;
+    private final DefaultTableModel atendimentosModel;
+    private final Connection connection;
 
     public Pesquisa(Connection connection) {
         this.connection = connection;
@@ -114,18 +113,15 @@ public class Pesquisa extends JFrame {
 
         // Tabela de atendimentos
         atendimentosModel = new DefaultTableModel(new String[]{"Data", "Horário", "Serviço", "Local", "Preço"}, 0);
-        atendimentosTable = new JTable(atendimentosModel);
+        JTable atendimentosTable = new JTable(atendimentosModel);
         JScrollPane scrollPane = new JScrollPane(atendimentosTable);
         add(scrollPane, BorderLayout.SOUTH);
 
-        buscarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String clienteSelecionado = (String) clienteComboBox.getSelectedItem();
-                if (clienteSelecionado != null) {
-                    buscarCliente(clienteSelecionado);
-                    buscarAtendimentos(clienteSelecionado);
-                }
+        buscarButton.addActionListener(e -> {
+            String clienteSelecionado = (String) clienteComboBox.getSelectedItem();
+            if (clienteSelecionado != null) {
+                buscarCliente(clienteSelecionado);
+                buscarAtendimentos(clienteSelecionado);
             }
         });
     }

@@ -25,47 +25,30 @@ public class NavBar {
         menuBar.add(fileMenu);
 
         // Adicionar ActionListener para "Agenda Atendimentos"
-        atendimentosInterface.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentFrame.dispose();
-                new TelaAtendimento(connection).setVisible(true);
-            }
+        atendimentosInterface.addActionListener(e -> {
+            currentFrame.dispose();
+            new TelaAtendimento(connection).setVisible(true);
         });
 
         // Adicionar ActionListener para "Cadastro Cliente"
-        cadastroClienteInterface.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentFrame.dispose();
-                new CadastroCliente(connection).setVisible(true);
-            }
+        cadastroClienteInterface.addActionListener(e -> {
+            currentFrame.dispose();
+            new CadastroCliente(connection).setVisible(true);
         });
 
         // Adicionar ActionListener para "Receitas"
-        receitasInterface.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentFrame.dispose();
-                new Receitas(connection).setVisible(true);
-            }
+        receitasInterface.addActionListener(e -> {
+            currentFrame.dispose();
+            new Receitas(connection).setVisible(true);
         });
         //Adicionar ActionListener para "Pesquisa"
-        pesquisaInterface.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentFrame.dispose();
-                new Pesquisa(connection).setVisible(true);
-            }
+        pesquisaInterface.addActionListener(e -> {
+            currentFrame.dispose();
+            new Pesquisa(connection).setVisible(true);
         });
 
         // Adicionar ActionListener para "Sair"
-        exitMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        exitMenuItem.addActionListener(e -> System.exit(0));
 
         return menuBar;
     }

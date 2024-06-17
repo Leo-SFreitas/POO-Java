@@ -11,14 +11,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CadastroCliente extends JFrame {
-    private JTable table;
-    private JTextField nameField;
-    private JTextField birthdayField;
-    private JTextField phoneField;
-    private JTextField addressField;
-    private DefaultTableModel model;
-    private Connection connection;
-    private JButton saveButton;
+    private final JTable table;
+    private final JTextField nomeField;
+    private final JTextField aniversárioField;
+    private final JTextField telefoneField;
+    private final JTextField enderecoField;
+    private final DefaultTableModel model;
+    private final Connection connection;
+    private final JButton salvarButton;
     private int editingClientId = -1; // Variável para armazenar o ID do cliente que está sendo editado
 
     public CadastroCliente(Connection connection) {
@@ -57,31 +57,31 @@ public class CadastroCliente extends JFrame {
         formPanel.setBorder(BorderFactory.createTitledBorder("Novo Cliente"));
 
         // Campos de texto
-        addLabelAndField("Nome:", nameField = new JTextField(20), formPanel, gbc, 0);
-        addLabelAndField("Aniversário:", birthdayField = new JTextField(20), formPanel, gbc, 1);
-        addLabelAndField("Telefone:", phoneField = new JTextField(20), formPanel, gbc, 2);
-        addLabelAndField("Endereço:", addressField = new JTextField(20), formPanel, gbc, 3);
+        addLabelAndField("Nome:", nomeField = new JTextField(20), formPanel, gbc, 0);
+        addLabelAndField("Aniversário:", aniversárioField = new JTextField(20), formPanel, gbc, 1);
+        addLabelAndField("Telefone:", telefoneField = new JTextField(20), formPanel, gbc, 2);
+        addLabelAndField("Endereço:", enderecoField = new JTextField(20), formPanel, gbc, 3);
 
         // Botões no formulário
         JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 5, 5));
 
         JButton addButton = new JButton("Adicionar");
         JButton editarButton = new JButton("Editar");
-        JButton deleteButton = new JButton("Excluir");
-        saveButton = new JButton("Salvar");
-        saveButton.setEnabled(false); // Desativa o botão Salvar inicialmente
+        JButton deletarButton = new JButton("Excluir");
+        salvarButton = new JButton("Salvar");
+        salvarButton.setEnabled(false); // Desativa o botão Salvar inicialmente
 
         // Ajuste de fonte dos botões
         Font buttonFont = new Font("Arial", Font.PLAIN, 16);
         addButton.setFont(buttonFont);
         editarButton.setFont(buttonFont);
-        deleteButton.setFont(buttonFont);
-        saveButton.setFont(buttonFont);
+        deletarButton.setFont(buttonFont);
+        salvarButton.setFont(buttonFont);
 
         buttonPanel.add(addButton);
-        buttonPanel.add(deleteButton);
+        buttonPanel.add(deletarButton);
         buttonPanel.add(editarButton);
-        buttonPanel.add(saveButton);
+        buttonPanel.add(salvarButton);
 
         gbc.gridx = 0;
         gbc.gridy = 4;
@@ -108,74 +108,62 @@ public class CadastroCliente extends JFrame {
         add(pane, gbc);
 
         // Ações dos botões
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (validateFields()) {
-                    String name = nameField.getText();
-                    String aniversario = birthdayField.getText();
-                    String phone = phoneField.getText();
-                    String address = addressField.getText();
-                    addClientToDatabase(name, aniversario, phone, address);
-                    clearFields();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos");
-                }
+        addButton.addActionListener(e -> {
+            if (validarCampos()) {
+                String nome = nomeField.getText();
+                String aniversario = aniversárioField.getText();
+                String telefone = telefoneField.getText();
+                String endereco = enderecoField.getText();
+                addClienteToBD(nome, aniversario, telefone, endereco);
+                limparCampos();
+            } else {
+                JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos");
             }
         });
 
-        editarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = table.getSelectedRow();
-                if (selectedRow != -1) {
-                    editingClientId = (int) model.getValueAt(selectedRow, 0);
-                    nameField.setText((String) model.getValueAt(selectedRow, 1));
-                    birthdayField.setText((String) model.getValueAt(selectedRow, 2));
-                    phoneField.setText((String) model.getValueAt(selectedRow, 3));
-                    addressField.setText((String) model.getValueAt(selectedRow, 4));
-                    saveButton.setEnabled(true); // Ativa o botão Salvar
-                } else {
-                    JOptionPane.showMessageDialog(null, "Selecione uma linha para editar");
-                }
+        editarButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                editingClientId = (int) model.getValueAt(selectedRow, 0);
+                nomeField.setText((String) model.getValueAt(selectedRow, 1));
+                aniversárioField.setText((String) model.getValueAt(selectedRow, 2));
+                telefoneField.setText((String) model.getValueAt(selectedRow, 3));
+                enderecoField.setText((String) model.getValueAt(selectedRow, 4));
+                salvarButton.setEnabled(true); // Ativa o botão Salvar
+            } else {
+                JOptionPane.showMessageDialog(null, "Selecione uma linha para editar");
             }
         });
 
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = table.getSelectedRow();
-                if (selectedRow != -1) {
-                    int id = (int) model.getValueAt(selectedRow, 0);
-                    deleteClientFromDatabase(id);
-                    model.removeRow(selectedRow);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Selecione uma linha para excluir");
-                }
+        deletarButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow != -1) {
+                int id = (int) model.getValueAt(selectedRow, 0);
+                deleteCliente(id);
+                model.removeRow(selectedRow);
+            } else {
+                JOptionPane.showMessageDialog(null, "Selecione uma linha para excluir");
             }
         });
 
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (validateFields() && editingClientId != -1) {
-                    String name = nameField.getText();
-                    String aniversario = birthdayField.getText();
-                    String phone = phoneField.getText();
-                    String address = addressField.getText();
-                    updateClientInDatabase(editingClientId, name, aniversario, phone, address);
-                    clearFields();
-                    saveButton.setEnabled(false); // Desativa o botão Salvar após a edição
-                } else {
-                    JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos");
-                }
+        salvarButton.addActionListener(e -> {
+            if (validarCampos() && editingClientId != -1) {
+                String name = nomeField.getText();
+                String aniversario = aniversárioField.getText();
+                String phone = telefoneField.getText();
+                String address = enderecoField.getText();
+                updateCliente(editingClientId, name, aniversario, phone, address);
+                limparCampos();
+                salvarButton.setEnabled(false); // Desativa o botão Salvar após a edição
+            } else {
+                JOptionPane.showMessageDialog(null, "Todos os campos devem ser preenchidos");
             }
         });
 
         // Definindo a cor do texto dos rótulos para preto
         for (Component component : formPanel.getComponents()) {
             if (component instanceof JLabel) {
-                ((JLabel) component).setForeground(Color.BLACK);
+                component.setForeground(Color.BLACK);
             }
         }
 
@@ -184,7 +172,7 @@ public class CadastroCliente extends JFrame {
         // Centraliza a janela na tela
         setLocationRelativeTo(null);
 
-        loadClientsFromDatabase();
+        loadClientesFromBD();
     }
 
     private void addLabelAndField(String labelText, JTextField textField, JPanel panel, GridBagConstraints gbc, int yPos) {
@@ -198,21 +186,21 @@ public class CadastroCliente extends JFrame {
         panel.add(textField, gbc);
     }
 
-    private boolean validateFields() {
-        return !nameField.getText().isEmpty() &&
-                !phoneField.getText().isEmpty() &&
-                !addressField.getText().isEmpty();
+    private boolean validarCampos() {
+        return !nomeField.getText().isEmpty() &&
+                !telefoneField.getText().isEmpty() &&
+                !enderecoField.getText().isEmpty();
     }
 
-    private void clearFields() {
-        nameField.setText("");
-        birthdayField.setText("");
-        phoneField.setText("");
-        addressField.setText("");
+    private void limparCampos() {
+        nomeField.setText("");
+        aniversárioField.setText("");
+        telefoneField.setText("");
+        enderecoField.setText("");
         editingClientId = -1; // Reseta o ID do cliente em edição
     }
 
-    private void addClientToDatabase(String name, String aniversario, String phone, String address) {
+    private void addClienteToBD(String name, String aniversario, String phone, String address) {
         String sql = "INSERT INTO clientes (nome, data_aniversario, telefone, endereco) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -222,14 +210,14 @@ public class CadastroCliente extends JFrame {
             stmt.setString(4, address);
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(this, "Cliente adicionado com sucesso!");
-            loadClientsFromDatabase();
+            loadClientesFromBD();
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao adicionar cliente ao banco de dados.");
         }
     }
 
-    private void deleteClientFromDatabase(int id) {
+    private void deleteCliente(int id) {
         String sql = "DELETE FROM clientes WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -242,7 +230,7 @@ public class CadastroCliente extends JFrame {
         }
     }
 
-    private void updateClientInDatabase(int id, String name, String aniversario, String phone, String address) {
+    private void updateCliente(int id, String name, String aniversario, String phone, String address) {
         String sql = "UPDATE clientes SET nome = ?, data_aniversario = ?, telefone = ?, endereco = ? WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -253,14 +241,14 @@ public class CadastroCliente extends JFrame {
             stmt.setInt(5, id);
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
-            loadClientsFromDatabase();
+            loadClientesFromBD();
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao atualizar cliente no banco de dados.");
         }
     }
 
-    private void loadClientsFromDatabase() {
+    private void loadClientesFromBD() {
         model.setRowCount(0); // Limpa os dados atuais da tabela
         String sql = "SELECT id, nome, data_aniversario, telefone, endereco FROM clientes ORDER BY nome"; // Ordena pelo nome
 
